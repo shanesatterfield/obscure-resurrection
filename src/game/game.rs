@@ -5,6 +5,7 @@ use bevy::prelude::*;
 use rand::thread_rng;
 use rand::Rng;
 
+use crate::camera::CameraFollowing;
 use crate::components::Velocity;
 use crate::config::{WINDOW_HEIGHT, WINDOW_WIDTH};
 use crate::game::components::Player;
@@ -35,11 +36,11 @@ fn spawn_player(mut commands: Commands, textures: Res<Textures>) {
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: textures.texture_atlas_handle.clone(),
             sprite: TextureAtlasSprite::new(81),
-            // transform: Transform::from_scale(Vec3::splat(10.0)),
             ..Default::default()
         })
         .insert(Player::default())
-        .insert(Velocity::new(Vec3::new(0., 0., 0.), 200.));
+        .insert(CameraFollowing::default())
+        .insert(Velocity::new(Vec3::new(0., 0., 0.), 50.));
 }
 
 fn spawn_enemies(mut commands: Commands, textures: Res<Textures>) {
@@ -49,7 +50,6 @@ fn spawn_enemies(mut commands: Commands, textures: Res<Textures>) {
             .spawn_bundle(SpriteSheetBundle {
                 texture_atlas: textures.texture_atlas_handle.clone(),
                 sprite: TextureAtlasSprite::new(rng.gen_range(1, 95)),
-                // transform: Transform::from_scale(Vec3::splat(10.0)),
                 transform: Transform::from_xyz(
                     rng.gen_range(-WINDOW_WIDTH, WINDOW_WIDTH),
                     rng.gen_range(-WINDOW_HEIGHT, WINDOW_HEIGHT),
@@ -66,7 +66,6 @@ fn spawn_enemies(mut commands: Commands, textures: Res<Textures>) {
                 ),
                 rng.gen_range(10., 200.),
             ));
-        // .insert(Velocity::new(Vec3::default(), rng.gen_range(1., 300.)));
     }
 }
 
@@ -77,7 +76,6 @@ fn spawn_items(mut commands: Commands, textures: Res<Textures>) {
             .spawn_bundle(SpriteSheetBundle {
                 texture_atlas: textures.texture_atlas_handle.clone(),
                 sprite: TextureAtlasSprite::new(rng.gen_range(35, 37)),
-                // transform: Transform::from_scale(Vec3::splat(10.0)),
                 transform: Transform::from_xyz(
                     rng.gen_range(-WINDOW_WIDTH, WINDOW_WIDTH),
                     rng.gen_range(-WINDOW_HEIGHT, WINDOW_HEIGHT),

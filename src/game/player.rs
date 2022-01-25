@@ -11,8 +11,7 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_system(move_player)
             .add_system(bounce_on_wall)
-            .add_system(pick_up_item)
-            .add_system(camera_follow_player.after("apply_movement"));
+            .add_system(pick_up_item);
     }
 }
 
@@ -60,17 +59,6 @@ fn pick_up_item(
             if let Some(_) = collide(player, sprite_sizer, transform.translation, sprite_sizer) {
                 commands.entity(entity).despawn();
             }
-        }
-    }
-}
-
-fn camera_follow_player(
-    player_query: Query<&Transform, (With<Player>, Without<Camera>)>,
-    mut camera_query: Query<&mut Transform, With<Camera>>,
-) {
-    if let Ok(player_transform) = player_query.get_single() {
-        if let Ok(mut camera_transform) = camera_query.get_single_mut() {
-            camera_transform.translation = player_transform.translation;
         }
     }
 }
