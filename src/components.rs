@@ -18,3 +18,12 @@ impl Velocity {
         self.direction * self.speed
     }
 }
+
+impl Default for Velocity {
+    fn default() -> Velocity {
+        Velocity {
+            direction: Vec3::default(),
+            speed: 50.,
+        }
+    }
+}

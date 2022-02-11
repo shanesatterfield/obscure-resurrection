@@ -4,6 +4,7 @@ mod camera;
 mod components;
 mod config;
 mod game;
+mod levels;
 mod movement;
 mod textures;
 mod types;
@@ -15,6 +16,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugin(textures::TexturePlugin)
         .add_plugin(camera::CameraPlugin)
+        .add_plugin(levels::LevelsPlugin)
         .add_plugin(movement::MovementPlugin)
         .add_plugin(game::game::GamePlugin)
         .run();

@@ -1,11 +1,11 @@
 extern crate rand;
 
 use bevy::prelude::*;
+use bevy_ecs_ldtk::prelude::*;
 
 use rand::thread_rng;
 use rand::Rng;
 
-use crate::camera::CameraFollowing;
 use crate::components::Velocity;
 use crate::config::{WINDOW_HEIGHT, WINDOW_WIDTH};
 use crate::game::components::Player;
@@ -14,6 +14,7 @@ use crate::types::GameState;
 
 use super::components::Enemy;
 use super::components::Item;
+use super::components::PlayerBundle;
 use super::player::PlayerPlugin;
 
 pub struct GamePlugin;
@@ -23,24 +24,19 @@ impl Plugin for GamePlugin {
         app.add_plugin(PlayerPlugin)
             .add_system_set(
                 SystemSet::on_enter(GameState::InGame)
-                    .with_system(spawn_player)
+                    .with_system(setup_player)
                     .with_system(spawn_items),
                 // .with_system(spawn_enemies),
             )
+            .register_ldtk_entity::<PlayerBundle>("Player")
             .add_system_set(SystemSet::on_exit(GameState::InGame).with_system(cleanup));
     }
 }
 
-fn spawn_player(mut commands: Commands, textures: Res<Textures>) {
-    commands
-        .spawn_bundle(SpriteSheetBundle {
-            texture_atlas: textures.texture_atlas_handle.clone(),
-            sprite: TextureAtlasSprite::new(81),
-            ..Default::default()
-        })
-        .insert(Player::default())
-        .insert(CameraFollowing::default())
-        .insert(Velocity::new(Vec3::new(0., 0., 0.), 50.));
+fn setup_player(mut query: Query<&mut TextureAtlasSprite, Added<Player>>) {
+    for mut sprite in query.iter_mut() {
+        sprite.index = 81;
+    }
 }
 
 fn spawn_enemies(mut commands: Commands, textures: Res<Textures>) {
