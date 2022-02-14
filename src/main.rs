@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use heron::prelude::*;
 
 mod camera;
 mod components;
@@ -14,6 +15,7 @@ fn main() {
         .insert_resource(ClearColor(Color::rgb(0.098, 0.078, 0.169)))
         .add_state(types::GameState::Loading)
         .add_plugins(DefaultPlugins)
+        .add_plugin(PhysicsPlugin::default())
         .add_plugin(textures::TexturePlugin)
         .add_plugin(camera::CameraPlugin)
         .add_plugin(levels::LevelsPlugin)

@@ -1,17 +1,16 @@
 use bevy::prelude::*;
 use bevy::sprite::collide_aabb::collide;
+use heron::prelude::*;
 
 use super::components::{Enemy, Item, Player};
-use crate::components::Velocity;
 use crate::config::{WINDOW_HEIGHT, WINDOW_WIDTH};
 
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(move_player)
-            .add_system(bounce_on_wall)
-            .add_system(pick_up_item);
+        app.add_system(move_player);
+        // .add_system(pick_up_item);
     }
 }
 
@@ -30,20 +29,8 @@ fn move_player(keyboard_input: Res<Input<KeyCode>>, mut query: Query<&mut Veloci
     }
 
     for mut velocity in query.iter_mut() {
-        velocity.direction = direction.normalize_or_zero();
-    }
-}
-
-fn bounce_on_wall(mut query: Query<(&mut Transform, &mut Velocity), With<Enemy>>) {
-    for (mut transform, mut velocity) in query.iter_mut() {
-        if transform.translation.x < -WINDOW_WIDTH || transform.translation.x > WINDOW_WIDTH {
-            velocity.direction = (velocity.direction * -Vec3::X).normalize_or_zero();
-            transform.translation += velocity.direction;
-        }
-        if transform.translation.y < -WINDOW_HEIGHT || transform.translation.y > WINDOW_HEIGHT {
-            velocity.direction = (velocity.direction * -Vec3::Y).normalize_or_zero();
-            transform.translation += velocity.direction;
-        }
+        // velocity.direction = direction.normalize_or_zero();
+        *velocity = Velocity::from_linear(direction.normalize_or_zero() * 50.);
     }
 }
 
