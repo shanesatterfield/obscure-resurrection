@@ -7,17 +7,12 @@ use heron::prelude::*;
 use rand::thread_rng;
 use rand::Rng;
 
-use crate::config::{WINDOW_HEIGHT, WINDOW_WIDTH};
 use crate::game::components::Player;
-use crate::textures::Textures;
 use crate::types::GameState;
 
-use super::components::ColliderBundle;
-use super::components::Enemy;
 use super::components::Item;
 use super::components::PlayerBundle;
 use super::components::PotionBundle;
-use super::components::Wall;
 use super::components::WallBundle;
 use super::player::PlayerPlugin;
 

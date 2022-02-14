@@ -2,15 +2,13 @@ use bevy::prelude::*;
 use bevy::sprite::collide_aabb::collide;
 use heron::prelude::*;
 
-use super::components::{Enemy, Item, Player};
-use crate::config::{WINDOW_HEIGHT, WINDOW_WIDTH};
+use super::components::{Item, Player};
 
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(move_player);
-        // .add_system(pick_up_item);
+        app.add_system(move_player).add_system(pick_up_item);
     }
 }
 
