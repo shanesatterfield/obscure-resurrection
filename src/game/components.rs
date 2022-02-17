@@ -92,35 +92,25 @@ impl From<EntityInstance> for ColliderBundle {
                 ..Default::default()
             },
             "Wall" => {
-                let width_field = entity_instance
-                    .field_instances
-                    .iter()
-                    .find(|f| f.identifier == "width".to_string())
-                    .unwrap();
+                let left = get_int_from_ldtk(&entity_instance, "left");
+                let right = get_int_from_ldtk(&entity_instance, "right");
+                let top = get_int_from_ldtk(&entity_instance, "top");
+                let bottom = get_int_from_ldtk(&entity_instance, "bottom");
 
-                let mut width: i32 = 1;
-                if let FieldValue::Int(width_value) = &width_field.value {
-                    width = width_value.unwrap();
-                }
-
-                let height_field = entity_instance
-                    .field_instances
-                    .iter()
-                    .find(|f| f.identifier == "height".to_string())
-                    .unwrap();
-
-                let mut height: i32 = 1;
-                if let FieldValue::Int(height_value) = &height_field.value {
-                    height = height_value.unwrap();
-                }
-
-                let width: f32 = 4. + (8 * (width - 1)) as f32;
-                let height: f32 = 4. + (8 * (height - 1)) as f32;
+                let left: f32 = (4. + (8 * (left - 1)) as f32) * -1.;
+                let right: f32 = 4. + (8 * (right - 1)) as f32;
+                let top: f32 = 4. + (8 * (top - 1)) as f32;
+                let bottom: f32 = (4. + (8 * (bottom - 1)) as f32) * -1.;
 
                 let rotation_constraints = RotationConstraints::lock();
                 return ColliderBundle {
-                    collider: CollisionShape::Cuboid {
-                        half_extends: Vec3::new(width, height, 0.),
+                    collider: CollisionShape::ConvexHull {
+                        points: vec![
+                            Vec3::new(left, top, 0.),
+                            Vec3::new(right, top, 0.),
+                            Vec3::new(right, bottom, 0.),
+                            Vec3::new(left, bottom, 0.),
+                        ],
                         border_radius: None,
                     },
                     rigid_body: RigidBody::Static,
@@ -131,4 +121,18 @@ impl From<EntityInstance> for ColliderBundle {
             _ => ColliderBundle::default(),
         }
     }
+}
+
+fn get_int_from_ldtk(entity_instance: &EntityInstance, field_name: &str) -> i32 {
+    let field = entity_instance
+        .field_instances
+        .iter()
+        .find(|f| f.identifier == field_name)
+        .unwrap();
+
+    let mut result: i32 = 1;
+    if let FieldValue::Int(value) = &field.value {
+        result = value.unwrap();
+    }
+    return result;
 }
