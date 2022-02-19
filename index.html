@@ -1,0 +1,35 @@
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+        <style>
+        body {
+            margin: 0px;
+            display: flex;
+            overflow: hidden;
+            height: 100vh;
+        }
+        canvas {
+            touch-action: none;
+            outline: none;
+            width: 100%;
+            height: 100%;
+            margin-inline: auto;
+            background-color: white;
+        }
+        </style>
+    </head>
+    <script type="module">
+        import init from './obscure-resurrection.js'
+        init()
+        function auto_focus () {
+          let canvas = document.getElementsByTagName('canvas')
+          if (!canvas.length) {
+            setTimeout(auto_focus, 100)
+          } else {
+            canvas[0].focus()
+          }
+        }
+        auto_focus()
+    </script>
+</html>

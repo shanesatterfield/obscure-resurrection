@@ -9,6 +9,11 @@ mod types;
 
 fn main() {
     App::new()
+        .insert_resource(WindowDescriptor {
+            title: "Obscure Resurrection".to_string(),
+            vsync: true,
+            ..Default::default()
+        })
         .insert_resource(ClearColor(Color::rgb(0.098, 0.078, 0.169)))
         .add_state(types::GameState::Loading)
         .add_system_set(
