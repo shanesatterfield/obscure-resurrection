@@ -39,6 +39,19 @@ pub struct PlayerBundle {
     pub collider_bundle: ColliderBundle,
 }
 
+#[derive(Clone, Default, Bundle, LdtkEntity)]
+pub struct EnemyBundle {
+    enemy: Enemy,
+
+    #[sprite_sheet_bundle]
+    #[bundle]
+    pub sprite_bundle: SpriteSheetBundle,
+
+    #[from_entity_instance]
+    #[bundle]
+    pub collider_bundle: ColliderBundle,
+}
+
 #[derive(Clone, Debug, Default, Bundle, LdtkEntity)]
 pub struct WallBundle {
     wall: Wall,
@@ -83,15 +96,15 @@ impl From<EntityInstance> for ColliderBundle {
                 rotation_constraints,
                 ..Default::default()
             },
-            // "Enemy" => ColliderBundle {
-            // collider: CollisionShape::Cuboid {
-            // half_extends: Vec3::new(5., 5., 0.),
-            // border_radius: None,
-            // },
-            // rigid_body: RigidBody::KinematicVelocityBased,
-            // rotation_constraints,
-            // ..Default::default()
-            // },
+            "Enemy" => ColliderBundle {
+                collider: CollisionShape::Cuboid {
+                    half_extends: Vec3::new(4., 4., 0.),
+                    border_radius: None,
+                },
+                rigid_body: RigidBody::Dynamic,
+                rotation_constraints,
+                ..Default::default()
+            },
             "Potion" => ColliderBundle {
                 collider: CollisionShape::Cuboid {
                     half_extends: Vec3::new(8., 8., 0.),

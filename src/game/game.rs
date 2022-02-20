@@ -7,9 +7,10 @@ use heron::prelude::*;
 use rand::thread_rng;
 use rand::Rng;
 
-use crate::game::components::{Player, Speed};
+use crate::game::components::{Enemy, Player, Speed};
 use crate::types::GameState;
 
+use super::components::EnemyBundle;
 use super::components::Item;
 use super::components::PlayerBundle;
 use super::components::PotionBundle;
@@ -40,11 +41,13 @@ impl Plugin for GamePlugin {
                 SystemSet::on_update(GameState::InGame)
                     .with_system(change_level)
                     .with_system(setup_player)
+                    .with_system(setup_enemy)
                     .with_system(setup_item),
             )
             .register_ldtk_entity::<PlayerBundle>("Player")
             .register_ldtk_entity::<PotionBundle>("Potion")
             .register_ldtk_entity::<WallBundle>("Wall")
+            .register_ldtk_entity::<EnemyBundle>("Enemy")
             .add_system_set(SystemSet::on_exit(GameState::InGame).with_system(cleanup));
     }
 }
@@ -53,6 +56,12 @@ fn setup_player(mut query: Query<(&mut TextureAtlasSprite, &mut Speed), Added<Pl
     for (mut sprite, mut speed) in query.iter_mut() {
         sprite.index = 81;
         speed.0 = 50.;
+    }
+}
+
+fn setup_enemy(mut query: Query<&mut TextureAtlasSprite, Added<Enemy>>) {
+    for mut sprite in query.iter_mut() {
+        sprite.index = 89;
     }
 }
 

@@ -41,7 +41,9 @@ fn change_direction(mut query: Query<(&Velocity, &mut FacingDirection), Changed<
     }
 }
 
-fn flip_assets(mut query: Query<(&mut Sprite, &FacingDirection), Changed<FacingDirection>>) {
+fn flip_assets(
+    mut query: Query<(&mut TextureAtlasSprite, &FacingDirection), Changed<FacingDirection>>,
+) {
     for (mut sprite, facing_direction) in query.iter_mut() {
         match facing_direction.0 {
             HorizontalDirection::LEFT => {
