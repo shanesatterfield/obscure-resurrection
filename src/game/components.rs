@@ -74,6 +74,15 @@ pub struct PotionBundle {
     pub collider_bundle: ColliderBundle,
 }
 
+#[derive(Bundle)]
+pub struct ProjectileBundle {
+    #[bundle]
+    pub sprite_bundle: SpriteBundle,
+
+    #[bundle]
+    pub collider_bundle: ColliderBundle,
+}
+
 #[derive(Clone, Debug, Default, Bundle, LdtkIntCell)]
 pub struct ColliderBundle {
     pub collider: CollisionShape,

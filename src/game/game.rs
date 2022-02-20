@@ -15,6 +15,7 @@ use super::components::Item;
 use super::components::PlayerBundle;
 use super::components::PotionBundle;
 use super::components::WallBundle;
+use super::enemy::EnemyPlugin;
 use super::player::PlayerPlugin;
 
 pub struct GamePlugin;
@@ -30,6 +31,7 @@ pub struct LevelState {
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(PlayerPlugin)
+            .add_plugin(EnemyPlugin)
             .insert_resource(LevelState {
                 current_level: 0,
                 max_levels: 2,
