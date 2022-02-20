@@ -48,14 +48,19 @@ fn on_shoot(
                             half_extends: Vec3::new(4., 4., 0.),
                             border_radius: None,
                         },
-                        rigid_body: RigidBody::KinematicVelocityBased,
+                        rigid_body: RigidBody::Dynamic,
                         rotation_constraints,
                         ..Default::default()
                     },
 
-                    ttl: TimeToLive(Timer::from_seconds(0.75, false)),
+                    ttl: TimeToLive(Timer::from_seconds(0.5, false)),
                 })
-                .insert(Velocity::from_linear(direction * 100.));
+                .insert(PhysicMaterial {
+                    restitution: 0.7,
+                    density: 1.,
+                    friction: 0.5,
+                })
+                .insert(Velocity::from_linear(direction * 150.));
         }
     }
 }
