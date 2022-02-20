@@ -14,6 +14,7 @@ use super::components::EnemyBundle;
 use super::components::Item;
 use super::components::PlayerBundle;
 use super::components::PotionBundle;
+use super::components::TimeToLive;
 use super::components::WallBundle;
 use super::enemy::EnemyPlugin;
 use super::player::PlayerPlugin;
@@ -44,7 +45,8 @@ impl Plugin for GamePlugin {
                     .with_system(change_level)
                     .with_system(setup_player)
                     .with_system(setup_enemy)
-                    .with_system(setup_item),
+                    .with_system(setup_item)
+                    .with_system(time_to_live_system),
             )
             .register_ldtk_entity::<PlayerBundle>("Player")
             .register_ldtk_entity::<PotionBundle>("Potion")
@@ -124,5 +126,17 @@ fn change_level(
         let next_level = (level_state.current_level + 1) % level_state.max_levels;
         level_state.current_level = next_level;
         *level_selection = LevelSelection::Index(next_level);
+    }
+}
+
+fn time_to_live_system(
+    mut commands: Commands,
+    time: Res<Time>,
+    mut query: Query<(Entity, &mut TimeToLive)>,
+) {
+    for (entity, mut timer) in query.iter_mut() {
+        if timer.0.tick(time.delta()).finished() {
+            commands.entity(entity).despawn();
+        }
     }
 }

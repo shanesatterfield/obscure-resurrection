@@ -22,6 +22,9 @@ pub struct Direction(pub Vec2);
 #[derive(Component, Default, Clone)]
 pub struct Speed(pub f32);
 
+#[derive(Component)]
+pub struct TimeToLive(pub Timer);
+
 #[derive(Bundle, LdtkEntity)]
 pub struct PlayerBundle {
     pub player: Player,
@@ -76,6 +79,8 @@ pub struct PotionBundle {
 
 #[derive(Bundle)]
 pub struct ProjectileBundle {
+    pub ttl: TimeToLive,
+
     #[bundle]
     pub sprite_bundle: SpriteBundle,
 
