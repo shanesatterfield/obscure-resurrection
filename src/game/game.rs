@@ -3,6 +3,8 @@ extern crate rand;
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 
+use big_brain::prelude::FirstToScore;
+use big_brain::prelude::Thinker;
 use heron::prelude::*;
 use rand::thread_rng;
 use rand::Rng;
@@ -16,7 +18,11 @@ use super::components::PlayerBundle;
 use super::components::PotionBundle;
 use super::components::TimeToLive;
 use super::components::WallBundle;
-use super::enemy::EnemyPlugin;
+use super::enemy::components::Aggroable;
+use super::enemy::components::Aggroed;
+use super::enemy::components::AttackPlayer;
+use super::enemy::components::Attacking;
+use super::enemy::enemy::EnemyPlugin;
 use super::player::PlayerPlugin;
 
 pub struct GamePlugin;
@@ -63,9 +69,24 @@ fn setup_player(mut query: Query<(&mut TextureAtlasSprite, &mut Speed), Added<Pl
     }
 }
 
-fn setup_enemy(mut query: Query<&mut TextureAtlasSprite, Added<Enemy>>) {
-    for mut sprite in query.iter_mut() {
+fn setup_enemy(
+    mut commands: Commands,
+    mut query: Query<(Entity, &mut TextureAtlasSprite, &mut Aggroable), Added<Enemy>>,
+) {
+    for (entity, mut sprite, mut aggroable) in query.iter_mut() {
         sprite.index = 89;
+        aggroable.distance = 100.;
+        commands
+            .entity(entity)
+            .insert(Attacking {
+                timer: Timer::from_seconds(0.5, true),
+                is_attacking: false,
+            })
+            .insert(
+                Thinker::build()
+                    .picker(FirstToScore { threshold: 0.8 })
+                    .when(Aggroed, AttackPlayer),
+            );
     }
 }
 

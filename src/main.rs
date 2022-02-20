@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use big_brain::BigBrainPlugin;
 use heron::prelude::*;
 
 mod camera;
@@ -21,6 +22,7 @@ fn main() {
         )
         .add_plugins(DefaultPlugins)
         .add_plugin(PhysicsPlugin::default())
+        .add_plugin(BigBrainPlugin)
         .add_plugin(texture::textures::TexturePlugin)
         .add_plugin(camera::CameraPlugin)
         .add_plugin(levels::LevelsPlugin)

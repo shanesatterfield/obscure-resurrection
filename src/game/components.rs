@@ -4,6 +4,8 @@ use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use heron::prelude::*;
 
+use super::enemy::components::Aggroable;
+
 #[derive(Component, Default, Clone)]
 pub struct Player;
 
@@ -44,7 +46,8 @@ pub struct PlayerBundle {
 
 #[derive(Clone, Default, Bundle, LdtkEntity)]
 pub struct EnemyBundle {
-    enemy: Enemy,
+    pub enemy: Enemy,
+    pub aggroable: Aggroable,
 
     #[sprite_sheet_bundle]
     #[bundle]

@@ -3,30 +3,36 @@ use heron::prelude::*;
 
 use crate::types::GameState;
 
-use super::components::{ColliderBundle, Enemy, Player, ProjectileBundle, TimeToLive};
+use super::{
+    super::components::{ColliderBundle, Enemy, Player, ProjectileBundle, TimeToLive},
+    components::Attacking,
+    shaman_ai::ShamanAi,
+};
 
 pub struct EnemyPlugin;
 
 impl Plugin for EnemyPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_update(GameState::InGame).with_system(on_shoot));
+        app.add_plugin(ShamanAi)
+            .add_system_set(SystemSet::on_update(GameState::InGame).with_system(on_shoot));
     }
 }
 
 fn on_shoot(
     mut commands: Commands,
-    keyboard_input: Res<Input<KeyCode>>,
+    time: Res<Time>,
     asset_server: Res<AssetServer>,
     player_query: Query<&Transform, With<Player>>,
-    query: Query<&Transform, With<Enemy>>,
+    mut query: Query<(&Transform, &mut Attacking), With<Enemy>>,
 ) {
-    if !keyboard_input.just_released(KeyCode::Return) {
-        return;
-    }
-
     let rotation_constraints = RotationConstraints::allow();
     if let Ok(player_transform) = player_query.get_single() {
-        for transform in query.iter() {
+        for (transform, mut attacking) in query.iter_mut() {
+            // Only shoot when the cooldown is over
+            if !attacking.is_attacking || !attacking.timer.tick(time.delta()).just_finished() {
+                continue;
+            }
+
             let direction =
                 (player_transform.translation - transform.translation).normalize_or_zero();
 
