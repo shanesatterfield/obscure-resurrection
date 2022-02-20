@@ -24,7 +24,7 @@ fn on_shoot(
         return;
     }
 
-    let rotation_constraints = RotationConstraints::lock();
+    let rotation_constraints = RotationConstraints::allow();
     if let Ok(player_transform) = player_query.get_single() {
         for transform in query.iter() {
             let direction =
