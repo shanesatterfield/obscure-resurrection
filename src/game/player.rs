@@ -2,18 +2,22 @@ use bevy::prelude::*;
 use bevy::sprite::collide_aabb::collide;
 use heron::prelude::*;
 
-use super::components::{Item, Player};
+use super::components::{Direction, Item, Player, Speed};
 
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(move_player).add_system(pick_up_item);
+        app.add_system_to_stage(CoreStage::PreUpdate, move_player.label("apply_movement"))
+            .add_system(pick_up_item);
     }
 }
 
-fn move_player(keyboard_input: Res<Input<KeyCode>>, mut query: Query<&mut Velocity, With<Player>>) {
-    let mut direction = Vec3::default();
+fn move_player(
+    keyboard_input: Res<Input<KeyCode>>,
+    mut query: Query<(&mut Direction, &Speed, &mut Velocity), With<Player>>,
+) {
+    let mut direction = Vec2::default();
     if keyboard_input.pressed(KeyCode::W) || keyboard_input.pressed(KeyCode::Up) {
         direction.y = 1.;
     } else if keyboard_input.pressed(KeyCode::S) || keyboard_input.pressed(KeyCode::Down) {
@@ -26,9 +30,11 @@ fn move_player(keyboard_input: Res<Input<KeyCode>>, mut query: Query<&mut Veloci
         direction.x = -1.;
     }
 
-    for mut velocity in query.iter_mut() {
-        // velocity.direction = direction.normalize_or_zero();
-        *velocity = Velocity::from_linear(direction.normalize_or_zero() * 50.);
+    for (mut old_direction, speed, mut velocity) in query.iter_mut() {
+        if old_direction.0 != direction {
+            old_direction.0 = direction;
+            *velocity = Velocity::from_linear(direction.extend(0.).normalize_or_zero() * speed.0);
+        }
     }
 }
 

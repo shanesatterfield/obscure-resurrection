@@ -1,4 +1,5 @@
 use crate::camera::CameraFollowing;
+use crate::texture::components::FacingDirection;
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use heron::prelude::*;
@@ -12,13 +13,22 @@ pub struct Enemy;
 #[derive(Component, Default, Clone)]
 pub struct Item;
 
-#[derive(Clone, Debug, Default, Component)]
+#[derive(Component, Clone, Debug, Default)]
 pub struct Wall;
+
+#[derive(Component, Default, Clone)]
+pub struct Direction(pub Vec2);
+
+#[derive(Component, Default, Clone)]
+pub struct Speed(pub f32);
 
 #[derive(Bundle, LdtkEntity)]
 pub struct PlayerBundle {
     pub player: Player,
     pub camera_following: CameraFollowing,
+    pub facing_direction: FacingDirection,
+    pub direction: Direction,
+    pub speed: Speed,
 
     #[sprite_sheet_bundle]
     #[bundle]

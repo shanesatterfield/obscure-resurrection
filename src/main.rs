@@ -4,7 +4,7 @@ use heron::prelude::*;
 mod camera;
 mod game;
 mod levels;
-mod textures;
+mod texture;
 mod types;
 
 fn main() {
@@ -21,7 +21,7 @@ fn main() {
         )
         .add_plugins(DefaultPlugins)
         .add_plugin(PhysicsPlugin::default())
-        .add_plugin(textures::TexturePlugin)
+        .add_plugin(texture::textures::TexturePlugin)
         .add_plugin(camera::CameraPlugin)
         .add_plugin(levels::LevelsPlugin)
         .add_plugin(game::game::GamePlugin)

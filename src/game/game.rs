@@ -7,7 +7,7 @@ use heron::prelude::*;
 use rand::thread_rng;
 use rand::Rng;
 
-use crate::game::components::Player;
+use crate::game::components::{Player, Speed};
 use crate::types::GameState;
 
 use super::components::Item;
@@ -45,14 +45,14 @@ impl Plugin for GamePlugin {
             .register_ldtk_entity::<PlayerBundle>("Player")
             .register_ldtk_entity::<PotionBundle>("Potion")
             .register_ldtk_entity::<WallBundle>("Wall")
-            .add_system(log_collisions)
             .add_system_set(SystemSet::on_exit(GameState::InGame).with_system(cleanup));
     }
 }
 
-fn setup_player(mut query: Query<&mut TextureAtlasSprite, Added<Player>>) {
-    for mut sprite in query.iter_mut() {
+fn setup_player(mut query: Query<(&mut TextureAtlasSprite, &mut Speed), Added<Player>>) {
+    for (mut sprite, mut speed) in query.iter_mut() {
         sprite.index = 81;
+        speed.0 = 50.;
     }
 }
 
