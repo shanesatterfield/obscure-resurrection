@@ -10,8 +10,13 @@ resolver = "2"
 # bevy = { version = "0.6.1", features = ["dynamic"] }
 bevy = "0.6.1"
 rand = { version = "0.7.3", features = ["wasm-bindgen"] }
-# bevy_ecs_ldtk =  "0.1.0"
+
+
+# The "atlas" feature is required to work in the WASM export.
+# This feature is not in the current release, so we have to pull from main
 bevy_ecs_ldtk = { git = "https://github.com/Trouv/bevy_ecs_ldtk", features = ["atlas"] }
+# bevy_ecs_ldtk =  "0.1.0"
+
 big-brain = "0.10.0"
 heron = { version = "1.2.0", features = ["2d"] }
 wasm-bindgen = "0.2.79"
