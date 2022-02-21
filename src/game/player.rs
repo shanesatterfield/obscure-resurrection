@@ -75,10 +75,7 @@ fn bork(
                 },
 
                 collider_bundle: ColliderBundle {
-                    collider: CollisionShape::Cuboid {
-                        half_extends: Vec3::new(16., 16., 0.),
-                        border_radius: None,
-                    },
+                    collider: CollisionShape::Sphere { radius: 16. },
                     collision_layers: CollisionLayers::none()
                         .with_group(GameCollisionLayers::PlayerAttack)
                         .with_masks(&[
