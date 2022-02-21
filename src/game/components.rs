@@ -19,9 +19,6 @@ pub struct Item;
 pub struct Wall;
 
 #[derive(Component, Default, Clone)]
-pub struct Direction(pub Vec2);
-
-#[derive(Component, Default, Clone)]
 pub struct Speed(pub f32);
 
 #[derive(Component)]
@@ -32,7 +29,6 @@ pub struct PlayerBundle {
     pub player: Player,
     pub camera_following: CameraFollowing,
     pub facing_direction: FacingDirection,
-    pub direction: Direction,
     pub speed: Speed,
 
     #[sprite_sheet_bundle]
@@ -48,6 +44,7 @@ pub struct PlayerBundle {
 pub struct EnemyBundle {
     pub enemy: Enemy,
     pub aggroable: Aggroable,
+    pub facing_direction: FacingDirection,
 
     #[sprite_sheet_bundle]
     #[bundle]

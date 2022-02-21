@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use bevy::sprite::collide_aabb::collide;
 use heron::prelude::*;
 
-use super::components::{Direction, Item, Player, Speed};
+use super::components::{Item, Player, Speed};
 
 pub struct PlayerPlugin;
 
@@ -15,7 +15,7 @@ impl Plugin for PlayerPlugin {
 
 fn move_player(
     keyboard_input: Res<Input<KeyCode>>,
-    mut query: Query<(&mut Direction, &Speed, &mut Velocity), With<Player>>,
+    mut query: Query<(&Speed, &mut Velocity), With<Player>>,
 ) {
     let mut direction = Vec2::default();
     if keyboard_input.pressed(KeyCode::W) || keyboard_input.pressed(KeyCode::Up) {
@@ -30,11 +30,8 @@ fn move_player(
         direction.x = -1.;
     }
 
-    for (mut old_direction, speed, mut velocity) in query.iter_mut() {
-        if old_direction.0 != direction {
-            old_direction.0 = direction;
-            *velocity = Velocity::from_linear(direction.extend(0.).normalize_or_zero() * speed.0);
-        }
+    for (speed, mut velocity) in query.iter_mut() {
+        *velocity = Velocity::from_linear(direction.extend(0.).normalize_or_zero() * speed.0);
     }
 }
 

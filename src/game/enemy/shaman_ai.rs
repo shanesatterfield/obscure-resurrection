@@ -64,11 +64,12 @@ fn aggro_score_system(
             if let Ok((transform, aggroable)) = enemy_query.get(*actor) {
                 let distance = player_transform.translation - transform.translation;
 
-                if distance.length().abs() < aggroable.distance.abs() {
-                    score.set(1.);
+                let score_value = if distance.length().abs() < aggroable.distance.abs() {
+                    1.
                 } else {
-                    score.set(0.);
-                }
+                    0.
+                };
+                score.set(score_value);
             }
         }
     }
