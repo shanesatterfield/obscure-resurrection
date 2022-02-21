@@ -2,14 +2,17 @@ use bevy::prelude::*;
 use bevy::sprite::collide_aabb::collide;
 use heron::prelude::*;
 
-use super::components::{Item, Player, Speed};
+use super::components::{
+    BorkBundle, ColliderBundle, GameCollisionLayers, Item, Player, Speed, TimeToLive,
+};
 
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_system_to_stage(CoreStage::PreUpdate, move_player.label("apply_movement"))
-            .add_system(pick_up_item);
+            .add_system(pick_up_item)
+            .add_system(bork);
     }
 }
 
@@ -48,5 +51,51 @@ fn pick_up_item(
                 commands.entity(entity).despawn();
             }
         }
+    }
+}
+
+fn bork(
+    mut commands: Commands,
+    keyboard_input: Res<Input<KeyCode>>,
+    asset_server: Res<AssetServer>,
+    query: Query<Entity, With<Player>>,
+) {
+    if !keyboard_input.just_pressed(KeyCode::Space) {
+        return;
+    }
+
+    for entity in query.iter() {
+        let child = commands
+            .spawn_bundle(BorkBundle {
+                ttl: TimeToLive(Timer::from_seconds(1., false)),
+
+                sprite_bundle: SpriteBundle {
+                    texture: asset_server.load("projectiles/bork_3.png"),
+                    ..Default::default()
+                },
+
+                collider_bundle: ColliderBundle {
+                    collider: CollisionShape::Cuboid {
+                        half_extends: Vec3::new(16., 16., 0.),
+                        border_radius: None,
+                    },
+                    collision_layers: CollisionLayers::none()
+                        .with_group(GameCollisionLayers::PlayerAttack)
+                        .with_masks(&[
+                            GameCollisionLayers::Enemy,
+                            GameCollisionLayers::EnemyAttack,
+                        ]),
+                    rigid_body: RigidBody::KinematicPositionBased,
+                    rotation_constraints: RotationConstraints::lock(),
+                    ..Default::default()
+                },
+            })
+            .insert(PhysicMaterial {
+                restitution: 0.7,
+                density: 1.,
+                ..Default::default()
+            })
+            .id();
+        commands.entity(entity).push_children(&[child]);
     }
 }

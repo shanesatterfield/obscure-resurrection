@@ -88,10 +88,32 @@ pub struct ProjectileBundle {
     pub collider_bundle: ColliderBundle,
 }
 
+#[derive(Bundle)]
+pub struct BorkBundle {
+    pub ttl: TimeToLive,
+
+    #[bundle]
+    pub sprite_bundle: SpriteBundle,
+
+    #[bundle]
+    pub collider_bundle: ColliderBundle,
+}
+
+#[derive(PhysicsLayer)]
+pub enum GameCollisionLayers {
+    World,
+    Player,
+    PlayerAttack,
+    Enemy,
+    EnemyAttack,
+    Item,
+}
+
 #[derive(Clone, Debug, Default, Bundle, LdtkIntCell)]
 pub struct ColliderBundle {
     pub collider: CollisionShape,
     pub rigid_body: RigidBody,
+    pub collision_layers: CollisionLayers,
     pub velocity: Velocity,
     pub rotation_constraints: RotationConstraints,
 }
@@ -106,6 +128,14 @@ impl From<EntityInstance> for ColliderBundle {
                     half_extends: Vec3::new(4., 4., 0.),
                     border_radius: None,
                 },
+                collision_layers: CollisionLayers::none()
+                    .with_group(GameCollisionLayers::Player)
+                    .with_masks(&[
+                        GameCollisionLayers::World,
+                        GameCollisionLayers::Enemy,
+                        GameCollisionLayers::EnemyAttack,
+                        GameCollisionLayers::Item,
+                    ]),
                 rigid_body: RigidBody::Dynamic,
                 rotation_constraints,
                 ..Default::default()
@@ -115,6 +145,13 @@ impl From<EntityInstance> for ColliderBundle {
                     half_extends: Vec3::new(4., 4., 0.),
                     border_radius: None,
                 },
+                collision_layers: CollisionLayers::none()
+                    .with_group(GameCollisionLayers::Enemy)
+                    .with_masks(&[
+                        GameCollisionLayers::World,
+                        GameCollisionLayers::Player,
+                        GameCollisionLayers::PlayerAttack,
+                    ]),
                 rigid_body: RigidBody::Dynamic,
                 rotation_constraints,
                 ..Default::default()
@@ -124,6 +161,9 @@ impl From<EntityInstance> for ColliderBundle {
                     half_extends: Vec3::new(8., 8., 0.),
                     border_radius: None,
                 },
+                collision_layers: CollisionLayers::none()
+                    .with_group(GameCollisionLayers::Item)
+                    .with_mask(GameCollisionLayers::Player),
                 rigid_body: RigidBody::Sensor,
                 rotation_constraints,
                 ..Default::default()
@@ -150,6 +190,14 @@ impl From<EntityInstance> for ColliderBundle {
                         ],
                         border_radius: None,
                     },
+                    collision_layers: CollisionLayers::none()
+                        .with_group(GameCollisionLayers::World)
+                        .with_masks(&[
+                            GameCollisionLayers::Player,
+                            GameCollisionLayers::PlayerAttack,
+                            GameCollisionLayers::Enemy,
+                            GameCollisionLayers::EnemyAttack,
+                        ]),
                     rigid_body: RigidBody::Static,
                     rotation_constraints,
                     ..Default::default()

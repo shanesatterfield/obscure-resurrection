@@ -32,7 +32,7 @@ fn toggle_projection(
     keyboard_input: Res<Input<KeyCode>>,
     mut query: Query<&mut OrthographicProjection>,
 ) {
-    if keyboard_input.just_released(KeyCode::Space) {
+    if keyboard_input.just_released(KeyCode::M) {
         for mut projection in query.iter_mut() {
             projection.scale = if projection.scale == 1. {
                 DEFAULT_PROJECTION

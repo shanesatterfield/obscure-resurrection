@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use heron::prelude::*;
 
-use crate::types::GameState;
+use crate::{game::components::GameCollisionLayers, types::GameState};
 
 use super::{
     super::components::{ColliderBundle, Enemy, Player, ProjectileBundle, TimeToLive},
@@ -44,7 +44,7 @@ fn on_shoot(
             commands
                 .spawn_bundle(ProjectileBundle {
                     sprite_bundle: SpriteBundle {
-                        texture: asset_server.load("energy-star.png"),
+                        texture: asset_server.load("projectiles/energy_star.png"),
                         transform: new_transform,
                         ..Default::default()
                     },
@@ -54,6 +54,13 @@ fn on_shoot(
                             half_extends: Vec3::new(4., 4., 0.),
                             border_radius: None,
                         },
+                        collision_layers: CollisionLayers::none()
+                            .with_group(GameCollisionLayers::EnemyAttack)
+                            .with_masks(&[
+                                GameCollisionLayers::World,
+                                GameCollisionLayers::Player,
+                                GameCollisionLayers::PlayerAttack,
+                            ]),
                         rigid_body: RigidBody::Dynamic,
                         rotation_constraints,
                         ..Default::default()
