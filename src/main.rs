@@ -8,6 +8,8 @@ mod levels;
 mod texture;
 mod types;
 
+pub struct StartGameTimer(Timer);
+
 fn main() {
     App::new()
         .insert_resource(WindowDescriptor {
