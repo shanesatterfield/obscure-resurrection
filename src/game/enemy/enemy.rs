@@ -1,11 +1,13 @@
 use bevy::prelude::*;
+use big_brain::prelude::FirstToScore;
+use big_brain::prelude::Thinker;
 use heron::prelude::*;
 
 use crate::{game::components::GameCollisionLayers, types::GameState};
 
 use super::{
     super::components::{ColliderBundle, Enemy, Player, ProjectileBundle, TimeToLive},
-    components::Attacking,
+    components::{Aggroable, Aggroed, AttackPlayer, Attacking},
     shaman_ai::ShamanAi,
 };
 
@@ -13,8 +15,32 @@ pub struct EnemyPlugin;
 
 impl Plugin for EnemyPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(ShamanAi)
-            .add_system_set(SystemSet::on_update(GameState::InGame).with_system(on_shoot));
+        app.add_plugin(ShamanAi).add_system_set(
+            SystemSet::on_update(GameState::InGame)
+                .with_system(setup_enemy)
+                .with_system(on_shoot),
+        );
+    }
+}
+
+fn setup_enemy(
+    mut commands: Commands,
+    mut query: Query<(Entity, &mut TextureAtlasSprite, &mut Aggroable), Added<Enemy>>,
+) {
+    for (entity, mut sprite, mut aggroable) in query.iter_mut() {
+        sprite.index = 89;
+        aggroable.distance = 100.;
+        commands
+            .entity(entity)
+            .insert(Attacking {
+                timer: Timer::from_seconds(0.5, true),
+                is_attacking: false,
+            })
+            .insert(
+                Thinker::build()
+                    .picker(FirstToScore { threshold: 0.8 })
+                    .when(Aggroed, AttackPlayer),
+            );
     }
 }
 

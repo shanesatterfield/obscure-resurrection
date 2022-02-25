@@ -1,4 +1,5 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, render::render_resource::TextureUsages};
+
 use heron::prelude::Velocity;
 
 use crate::types::GameState;
@@ -56,7 +57,6 @@ fn flip_assets(
         }
     }
 }
-use bevy::{prelude::*, render::render_resource::TextureUsages};
 
 pub fn set_texture_filters_to_nearest(
     mut texture_events: EventReader<AssetEvent<Image>>,
