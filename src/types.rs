@@ -1,7 +1,7 @@
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub enum GameState {
+    MainMenu,
     Loading,
-    // MainMenu,
     InGame,
     // GameOver,
 }

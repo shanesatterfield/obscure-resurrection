@@ -3,6 +3,9 @@ use bevy::prelude::*;
 #[derive(Component, Default)]
 pub struct CameraFollowing;
 
+#[derive(Component, Default)]
+pub struct CameraThatFollows;
+
 pub struct CameraPlugin;
 
 const DEFAULT_PROJECTION: f32 = 1. / 4.;
@@ -24,8 +27,11 @@ fn setup(mut commands: Commands) {
     camera.orthographic_projection.scale = DEFAULT_PROJECTION;
 
     // commands.spawn_bundle(camera).insert(ScalingCamera);
-    commands.spawn_bundle(camera);
-    // commands.spawn_bundle(UiCameraBundle::default());
+    commands
+        .spawn_bundle(camera)
+        .insert(CameraThatFollows::default());
+
+    commands.spawn_bundle(UiCameraBundle::default());
 }
 
 fn toggle_projection(
@@ -44,8 +50,8 @@ fn toggle_projection(
 }
 
 fn camera_follow_player(
-    player_query: Query<&Transform, (With<CameraFollowing>, Without<Camera>)>,
-    mut camera_query: Query<&mut Transform, With<Camera>>,
+    player_query: Query<&Transform, (With<CameraFollowing>, Without<CameraThatFollows>)>,
+    mut camera_query: Query<&mut Transform, With<CameraThatFollows>>,
 ) {
     if let Ok(player_transform) = player_query.get_single() {
         if let Ok(mut camera_transform) = camera_query.get_single_mut() {

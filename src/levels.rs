@@ -22,7 +22,7 @@ impl Plugin for LevelsPlugin {
             })
             .add_event::<IncrementLevel>()
             .add_plugin(LdtkPlugin)
-            .add_system_set(SystemSet::on_enter(GameState::Loading).with_system(setup))
+            .add_system_set(SystemSet::on_enter(GameState::InGame).with_system(setup))
             .add_system(change_level);
     }
 }
