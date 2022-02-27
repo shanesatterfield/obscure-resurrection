@@ -47,7 +47,7 @@ impl Plugin for GamePlugin {
             })
             .add_system_set(
                 SystemSet::on_update(GameState::InGame)
-                    .with_system(player_damaged)
+                    .with_system(player_damaged.label("damage_calculation"))
                     .with_system(change_level)
                     .with_system(setup_item)
                     .with_system(time_to_live_system),

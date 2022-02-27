@@ -19,7 +19,8 @@ impl Plugin for UiPlugin {
     fn build(&self, app: &mut App) {
         app.add_system_set(SystemSet::on_enter(GameState::InGame).with_system(spawn_ui))
             .add_system_set(
-                SystemSet::on_update(GameState::InGame).with_system(update_health_containers),
+                SystemSet::on_update(GameState::InGame)
+                    .with_system(update_health_containers.after("damage_calculation")),
             );
     }
 }
@@ -81,7 +82,7 @@ fn update_health_containers(
 ) {
     for _ in event_reader.iter() {
         for (mut image, element_index) in query.iter_mut() {
-            if element_index.0 >= game_world_state.player_health {
+            if element_index.0 > game_world_state.player_health {
                 *image = asset_server.load("icons/empty_heart_container.png").into();
             } else {
                 *image = asset_server.load("icons/heart.png").into();
