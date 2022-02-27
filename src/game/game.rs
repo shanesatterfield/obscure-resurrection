@@ -10,14 +10,19 @@ use crate::game::components::Player;
 use crate::levels::IncrementLevel;
 use crate::types::GameState;
 
+use super::collision::CollisionPlugin;
 use super::components::EnemyBundle;
 use super::components::Item;
 use super::components::PlayerBundle;
+use super::components::PlayerDamaged;
 use super::components::PotionBundle;
 use super::components::TimeToLive;
 use super::components::WallBundle;
 use super::enemy::enemy::EnemyPlugin;
 use super::player::PlayerPlugin;
+use super::ui::UiPlugin;
+
+pub const PLAYER_MAX_HEALTH: u32 = 5;
 
 pub struct GamePlugin;
 
@@ -25,19 +30,24 @@ pub struct GameWorldState {
     pub is_level_loaded: bool,
     pub potion_count: u32,
     pub potion_inventory: u32,
+    pub player_health: u32,
 }
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(PlayerPlugin)
             .add_plugin(EnemyPlugin)
+            .add_plugin(UiPlugin)
+            .add_plugin(CollisionPlugin)
             .insert_resource(GameWorldState {
                 is_level_loaded: false,
                 potion_count: 0,
                 potion_inventory: 0,
+                player_health: PLAYER_MAX_HEALTH,
             })
             .add_system_set(
                 SystemSet::on_update(GameState::InGame)
+                    .with_system(player_damaged)
                     .with_system(change_level)
                     .with_system(setup_item)
                     .with_system(time_to_live_system),
@@ -46,6 +56,7 @@ impl Plugin for GamePlugin {
             .register_ldtk_entity::<PotionBundle>("Potion")
             .register_ldtk_entity::<WallBundle>("Wall")
             .register_ldtk_entity::<EnemyBundle>("Enemy")
+            .add_event::<PlayerDamaged>()
             .add_system_set(SystemSet::on_exit(GameState::InGame).with_system(cleanup));
     }
 }
@@ -90,6 +101,17 @@ fn time_to_live_system(
     for (entity, mut timer) in query.iter_mut() {
         if timer.0.tick(time.delta()).finished() {
             commands.entity(entity).despawn();
+        }
+    }
+}
+
+fn player_damaged(
+    mut event_reader: EventReader<PlayerDamaged>,
+    mut game_world_state: ResMut<GameWorldState>,
+) {
+    for _ in event_reader.iter() {
+        if game_world_state.player_health > 0 {
+            game_world_state.player_health -= 1;
         }
     }
 }

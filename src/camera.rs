@@ -8,7 +8,9 @@ pub struct CameraThatFollows;
 
 pub struct CameraPlugin;
 
-const DEFAULT_PROJECTION: f32 = 1. / 4.;
+pub const WINDOW_SCALE: f32 = 4.;
+
+pub const DEFAULT_PROJECTION: f32 = 1. / WINDOW_SCALE;
 
 impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {

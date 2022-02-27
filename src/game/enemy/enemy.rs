@@ -33,7 +33,7 @@ fn setup_enemy(
         commands
             .entity(entity)
             .insert(Attacking {
-                timer: Timer::from_seconds(0.5, true),
+                timer: Timer::from_seconds(1., true),
                 is_attacking: false,
             })
             .insert(
