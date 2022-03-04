@@ -4,6 +4,7 @@ use heron::prelude::*;
 
 mod camera;
 mod game;
+mod game_over;
 mod levels;
 mod main_menu;
 mod texture;
@@ -29,6 +30,7 @@ fn main() {
         .add_plugin(texture::textures::TexturePlugin)
         .add_plugin(camera::CameraPlugin)
         .add_plugin(main_menu::MainMenuPlugin)
+        .add_plugin(game_over::GameOverPlugin)
         .add_plugin(levels::LevelsPlugin)
         .add_plugin(game::game::GamePlugin)
         .run();

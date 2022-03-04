@@ -3,5 +3,5 @@ pub enum GameState {
     MainMenu,
     Loading,
     InGame,
-    // GameOver,
+    GameOver,
 }
