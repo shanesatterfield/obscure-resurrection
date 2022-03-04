@@ -3,9 +3,12 @@ use bevy::prelude::*;
 use crate::{camera::WINDOW_SCALE, types::GameState};
 
 use super::{
-    components::PlayerDamaged,
+    events::PlayerDamaged,
     game::{GameWorldState, PLAYER_MAX_HEALTH},
 };
+
+#[derive(Component, Default, Clone, Debug)]
+pub struct GameUi;
 
 #[derive(Component, Default, Clone, Debug)]
 pub struct UiElementIndex(u32);
@@ -21,7 +24,8 @@ impl Plugin for UiPlugin {
             .add_system_set(
                 SystemSet::on_update(GameState::InGame)
                     .with_system(update_health_containers.after("damage_calculation")),
-            );
+            )
+            .add_system_set(SystemSet::on_exit(GameState::InGame).with_system(cleanup));
     }
 }
 
@@ -37,6 +41,7 @@ fn spawn_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
             color: Color::NONE.into(),
             ..Default::default()
         })
+        .insert(GameUi::default())
         .with_children(|parent| {
             parent
                 .spawn_bundle(NodeBundle {
@@ -88,5 +93,11 @@ fn update_health_containers(
                 *image = asset_server.load("icons/heart.png").into();
             }
         }
+    }
+}
+
+fn cleanup(mut commands: Commands, query: Query<Entity, With<GameUi>>) {
+    for entity in query.iter() {
+        commands.entity(entity).despawn_recursive();
     }
 }

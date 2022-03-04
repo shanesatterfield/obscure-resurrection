@@ -3,7 +3,7 @@ use heron::{CollisionEvent, CollisionLayers};
 
 use crate::types::GameState;
 
-use super::components::{GameCollisionLayers, PlayerDamaged};
+use super::{components::GameCollisionLayers, events::PlayerDamaged};
 
 pub struct CollisionPlugin;
 

@@ -6,13 +6,6 @@ use heron::prelude::*;
 
 use super::enemy::components::Aggroable;
 
-// Events
-
-#[derive(Default, Clone, Debug)]
-pub struct PlayerDamaged;
-
-// Components
-
 #[derive(Component, Default, Clone)]
 pub struct Player;
 

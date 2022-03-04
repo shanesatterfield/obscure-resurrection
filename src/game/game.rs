@@ -6,23 +6,23 @@ use bevy_ecs_ldtk::prelude::*;
 use rand::thread_rng;
 use rand::Rng;
 
-use crate::game::components::Player;
 use crate::levels::IncrementLevel;
+use crate::levels::ResetLevel;
 use crate::types::GameState;
 
 use super::collision::CollisionPlugin;
 use super::components::EnemyBundle;
 use super::components::Item;
 use super::components::PlayerBundle;
-use super::components::PlayerDamaged;
 use super::components::PotionBundle;
 use super::components::TimeToLive;
 use super::components::WallBundle;
 use super::enemy::enemy::EnemyPlugin;
+use super::events::PlayerDamaged;
 use super::player::PlayerPlugin;
 use super::ui::UiPlugin;
 
-pub const PLAYER_MAX_HEALTH: u32 = 5;
+pub const PLAYER_MAX_HEALTH: u32 = 3;
 
 pub struct GamePlugin;
 
@@ -45,6 +45,7 @@ impl Plugin for GamePlugin {
                 potion_inventory: 0,
                 player_health: PLAYER_MAX_HEALTH,
             })
+            .add_system_set(SystemSet::on_enter(GameState::InGame).with_system(reset_game_world))
             .add_system_set(
                 SystemSet::on_update(GameState::InGame)
                     .with_system(player_damaged.label("damage_calculation"))
@@ -56,9 +57,21 @@ impl Plugin for GamePlugin {
             .register_ldtk_entity::<PotionBundle>("Potion")
             .register_ldtk_entity::<WallBundle>("Wall")
             .register_ldtk_entity::<EnemyBundle>("Enemy")
-            .add_event::<PlayerDamaged>()
-            .add_system_set(SystemSet::on_exit(GameState::InGame).with_system(cleanup));
+            .add_event::<PlayerDamaged>();
     }
+}
+
+fn reset_game_world(
+    mut game_world_state: ResMut<GameWorldState>,
+    mut reset_level_event: EventWriter<ResetLevel>,
+) {
+    *game_world_state = GameWorldState {
+        is_level_loaded: false,
+        potion_count: 0,
+        potion_inventory: 0,
+        player_health: PLAYER_MAX_HEALTH,
+    };
+    reset_level_event.send(ResetLevel::default());
 }
 
 fn setup_item(
@@ -73,12 +86,6 @@ fn setup_item(
         if !level_state.is_level_loaded {
             level_state.is_level_loaded = true;
         }
-    }
-}
-
-fn cleanup(mut commands: Commands, query: Query<Entity, With<Player>>) {
-    for entity in query.iter() {
-        commands.entity(entity).despawn();
     }
 }
 
@@ -108,10 +115,15 @@ fn time_to_live_system(
 fn player_damaged(
     mut event_reader: EventReader<PlayerDamaged>,
     mut game_world_state: ResMut<GameWorldState>,
+    mut game_state: ResMut<State<GameState>>,
 ) {
     for _ in event_reader.iter() {
         if game_world_state.player_health > 0 {
             game_world_state.player_health -= 1;
+        }
+
+        if game_world_state.player_health == 0 {
+            game_state.set(GameState::MainMenu).unwrap();
         }
     }
 }
