@@ -16,7 +16,7 @@ pub struct Textures {
 impl Plugin for TexturePlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(Textures::default())
-            .add_system_set(SystemSet::on_enter(GameState::Loading).with_system(load_assets))
+            .add_system_set(SystemSet::on_enter(GameState::MainMenu).with_system(load_assets))
             .add_system(change_direction)
             .add_system(set_texture_filters_to_nearest)
             .add_system(flip_assets);

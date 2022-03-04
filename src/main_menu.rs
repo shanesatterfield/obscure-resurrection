@@ -69,7 +69,7 @@ fn spawn_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
 fn load_game(keyboard_input: Res<Input<KeyCode>>, mut game_state: ResMut<State<GameState>>) {
     if keyboard_input.just_released(KeyCode::Space) || keyboard_input.just_released(KeyCode::Return)
     {
-        game_state.set(GameState::Loading).unwrap();
+        game_state.set(GameState::InGame).unwrap();
     }
 }
 
