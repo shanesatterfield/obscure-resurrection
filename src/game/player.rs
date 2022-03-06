@@ -3,8 +3,9 @@ use heron::prelude::*;
 
 use crate::types::GameState;
 
-use super::components::{
-    BorkBundle, ColliderBundle, GameCollisionLayers, Player, Speed, TimeToLive,
+use super::{
+    components::{BorkBundle, ColliderBundle, GameCollisionLayers, Player, Speed, TimeToLive},
+    game::GameWorldState,
 };
 
 pub struct PlayerPlugin;
@@ -50,6 +51,7 @@ fn move_player(
 
 fn bork(
     mut commands: Commands,
+    mut game_world_state: ResMut<GameWorldState>,
     keyboard_input: Res<Input<KeyCode>>,
     asset_server: Res<AssetServer>,
     query: Query<Entity, With<Player>>,
@@ -58,10 +60,24 @@ fn bork(
         return;
     }
 
+    // Not enough bork points to bork!
+    if game_world_state.bork_points == 0 {
+        return;
+    }
+
     for entity in query.iter() {
+        // Check again to make sure that it's still possible to bork
+        if game_world_state.bork_points == 0 {
+            return;
+        }
+
+        // Use up a bork point
+        game_world_state.bork_points -= 1;
+
+        // Spawn the bork as a child of the player
         let child = commands
             .spawn_bundle(BorkBundle {
-                ttl: TimeToLive(Timer::from_seconds(1., false)),
+                ttl: TimeToLive(Timer::from_seconds(5., false)),
 
                 sprite_bundle: SpriteBundle {
                     texture: asset_server.load("projectiles/bork_3.png"),
@@ -87,6 +103,7 @@ fn bork(
                 ..Default::default()
             })
             .id();
+
         commands.entity(entity).push_children(&[child]);
     }
 }

@@ -18,6 +18,7 @@ use super::components::StairsBundle;
 use super::components::TimeToLive;
 use super::components::WallBundle;
 use super::enemy::enemy::EnemyPlugin;
+use super::events::PickupItem;
 use super::events::PlayerDamaged;
 use super::player::PlayerPlugin;
 use super::ui::UiPlugin;
@@ -26,9 +27,21 @@ pub const PLAYER_MAX_HEALTH: u32 = 3;
 
 pub struct GamePlugin;
 
+#[derive(Clone, Debug)]
 pub struct GameWorldState {
-    pub potion_inventory: u32,
     pub player_health: u32,
+    pub potion_inventory: u32,
+    pub bork_points: u32,
+}
+
+impl Default for GameWorldState {
+    fn default() -> Self {
+        Self {
+            player_health: PLAYER_MAX_HEALTH,
+            potion_inventory: 0,
+            bork_points: 0,
+        }
+    }
 }
 
 impl Plugin for GamePlugin {
@@ -37,15 +50,13 @@ impl Plugin for GamePlugin {
             .add_plugin(EnemyPlugin)
             .add_plugin(UiPlugin)
             .add_plugin(CollisionPlugin)
-            .insert_resource(GameWorldState {
-                potion_inventory: 0,
-                player_health: PLAYER_MAX_HEALTH,
-            })
+            .insert_resource(GameWorldState::default())
             .add_system_set(SystemSet::on_enter(GameState::InGame).with_system(reset_game_world))
             .add_system_set(
                 SystemSet::on_update(GameState::InGame)
                     .with_system(player_damaged.label("damage_calculation"))
                     .with_system(setup_item)
+                    .with_system(player_picked_up_item)
                     .with_system(time_to_live_system),
             )
             .register_ldtk_entity::<PlayerBundle>("Player")
@@ -53,7 +64,8 @@ impl Plugin for GamePlugin {
             .register_ldtk_entity::<WallBundle>("Wall")
             .register_ldtk_entity::<StairsBundle>("Stairs")
             .register_ldtk_entity::<EnemyBundle>("Enemy")
-            .add_event::<PlayerDamaged>();
+            .add_event::<PlayerDamaged>()
+            .add_event::<PickupItem>();
     }
 }
 
@@ -61,10 +73,7 @@ fn reset_game_world(
     mut game_world_state: ResMut<GameWorldState>,
     mut reset_level_event: EventWriter<ResetLevel>,
 ) {
-    *game_world_state = GameWorldState {
-        potion_inventory: 0,
-        player_health: PLAYER_MAX_HEALTH,
-    };
+    *game_world_state = GameWorldState::default();
     reset_level_event.send(ResetLevel::default());
 }
 
@@ -101,4 +110,11 @@ fn player_damaged(
             game_state.set(GameState::GameOver).unwrap();
         }
     }
+}
+
+fn player_picked_up_item(
+    mut event_reader: EventReader<PickupItem>,
+    mut game_world_state: ResMut<GameWorldState>,
+) {
+    game_world_state.bork_points += event_reader.iter().count() as u32;
 }

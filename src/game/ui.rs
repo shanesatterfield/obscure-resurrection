@@ -16,6 +16,9 @@ pub struct UiElementIndex(u32);
 #[derive(Component, Default, Clone, Debug)]
 pub struct HealthContainerImage;
 
+#[derive(Component, Default, Clone, Debug)]
+pub struct BorkPointNumber;
+
 pub struct UiPlugin;
 
 impl Plugin for UiPlugin {
@@ -23,7 +26,8 @@ impl Plugin for UiPlugin {
         app.add_system_set(SystemSet::on_enter(GameState::InGame).with_system(spawn_ui))
             .add_system_set(
                 SystemSet::on_update(GameState::InGame)
-                    .with_system(update_health_containers.after("damage_calculation")),
+                    .with_system(update_health_containers.after("damage_calculation"))
+                    .with_system(update_potion_counter),
             )
             .add_system_set(SystemSet::on_exit(GameState::InGame).with_system(cleanup));
     }
@@ -59,6 +63,7 @@ fn spawn_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
                     ..Default::default()
                 })
                 .with_children(|parent| {
+                    // Hearth Points Counter
                     for index in 1..=PLAYER_MAX_HEALTH {
                         parent
                             .spawn_bundle(ImageBundle {
@@ -69,11 +74,37 @@ fn spawn_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
                                     ),
                                     ..Default::default()
                                 },
-                                image: asset_server.load("individual_sprites/tile045.png").into(),
+                                image: asset_server.load("icons/heart.png").into(),
                                 ..Default::default()
                             })
                             .insert(UiElementIndex(index))
                             .insert(HealthContainerImage::default());
+                    }
+
+                    // Bork Points Counter
+                    parent.spawn_bundle(ImageBundle {
+                        style: Style {
+                            size: Size::new(Val::Px(8. * WINDOW_SCALE), Val::Px(8. * WINDOW_SCALE)),
+                            ..Default::default()
+                        },
+                        image: asset_server.load("icons/potion.png").into(),
+                        ..Default::default()
+                    });
+                    for index in 1..=3 {
+                        parent
+                            .spawn_bundle(ImageBundle {
+                                style: Style {
+                                    size: Size::new(
+                                        Val::Px(8. * WINDOW_SCALE),
+                                        Val::Px(8. * WINDOW_SCALE),
+                                    ),
+                                    ..Default::default()
+                                },
+                                image: asset_server.load("text/tile-0.png").into(),
+                                ..Default::default()
+                            })
+                            .insert(UiElementIndex(4 - index))
+                            .insert(BorkPointNumber::default());
                     }
                 });
         });
@@ -93,6 +124,48 @@ fn update_health_containers(
                 *image = asset_server.load("icons/heart.png").into();
             }
         }
+    }
+}
+
+fn update_potion_counter(
+    game_world_state: Res<GameWorldState>,
+    asset_server: Res<AssetServer>,
+    mut query: Query<(&mut UiImage, &UiElementIndex), With<BorkPointNumber>>,
+) {
+    let bork_points = game_world_state.bork_points;
+    let ones = bork_points % 10;
+    let tens = (bork_points % 100) - ones;
+    let hundreds = (bork_points % 1000) - tens - ones;
+
+    for (mut image, element_index) in query.iter_mut() {
+        match element_index.0 {
+            1 => {
+                *image = number_to_image(asset_server.clone(), ones).into();
+            }
+            2 => {
+                *image = number_to_image(asset_server.clone(), tens).into();
+            }
+            3 => {
+                *image = number_to_image(asset_server.clone(), hundreds).into();
+            }
+            _ => {}
+        }
+    }
+}
+
+fn number_to_image(asset_server: AssetServer, num: u32) -> Handle<Image> {
+    match num {
+        0 => asset_server.load("text/tile-0.png"),
+        1 => asset_server.load("text/tile-1.png"),
+        2 => asset_server.load("text/tile-2.png"),
+        3 => asset_server.load("text/tile-3.png"),
+        4 => asset_server.load("text/tile-4.png"),
+        5 => asset_server.load("text/tile-5.png"),
+        6 => asset_server.load("text/tile-6.png"),
+        7 => asset_server.load("text/tile-7.png"),
+        8 => asset_server.load("text/tile-8.png"),
+        9 => asset_server.load("text/tile-9.png"),
+        _ => asset_server.load("text/tile-0.png"),
     }
 }
 

@@ -3,7 +3,10 @@ use heron::{CollisionEvent, CollisionLayers};
 
 use crate::{levels::IncrementLevel, types::GameState};
 
-use super::{components::GameCollisionLayers, events::PlayerDamaged};
+use super::{
+    components::GameCollisionLayers,
+    events::{PickupItem, PlayerDamaged},
+};
 
 pub struct CollisionPlugin;
 
@@ -47,6 +50,7 @@ fn player_attack_collision(
 fn player_item_collision(
     mut commands: Commands,
     mut collision_events: EventReader<CollisionEvent>,
+    mut item_pickup_event: EventWriter<PickupItem>,
 ) {
     collision_events
         .iter()
@@ -65,6 +69,7 @@ fn player_item_collision(
         })
         .for_each(|item_entity| {
             commands.entity(item_entity).despawn_recursive();
+            item_pickup_event.send(PickupItem::default());
         });
 }
 
