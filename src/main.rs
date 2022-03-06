@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy_kira_audio::{Audio, AudioPlugin};
 use big_brain::BigBrainPlugin;
 use heron::prelude::*;
 
@@ -24,11 +25,17 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugin(PhysicsPlugin::default())
         .add_plugin(BigBrainPlugin)
+        .add_plugin(AudioPlugin)
         .add_plugin(texture::textures::TexturePlugin)
         .add_plugin(camera::CameraPlugin)
         .add_plugin(main_menu::MainMenuPlugin)
         .add_plugin(game_over::GameOverPlugin)
         .add_plugin(levels::LevelsPlugin)
         .add_plugin(game::game::GamePlugin)
+        .add_startup_system(play_background_audio)
         .run();
+}
+
+fn play_background_audio(asset_server: Res<AssetServer>, audio: Res<Audio>) {
+    audio.play_looped(asset_server.load("audio/background_music.wav"));
 }
