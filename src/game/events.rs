@@ -5,4 +5,7 @@ pub struct PlayerDamaged;
 pub struct PickupItem;
 
 #[derive(Default, Clone, Debug)]
+pub struct PickupCoin;
+
+#[derive(Default, Clone, Debug)]
 pub struct GameOver;

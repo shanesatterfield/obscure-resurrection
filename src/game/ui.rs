@@ -164,8 +164,8 @@ fn update_potion_counter(
 ) {
     let bork_points = game_world_state.bork_points;
     let ones = bork_points % 10;
-    let tens = (bork_points % 100) - ones;
-    let hundreds = (bork_points % 1000) - tens - ones;
+    let tens = ((bork_points % 100) - ones) / 10;
+    let hundreds = ((bork_points % 1000) - tens - ones) / 100;
 
     for (mut image, element_index) in query.iter_mut() {
         match element_index.0 {
@@ -190,8 +190,8 @@ fn update_coin_counter(
 ) {
     let coins = game_world_state.coins;
     let ones = coins % 10;
-    let tens = (coins % 100) - ones;
-    let hundreds = (coins % 1000) - tens - ones;
+    let tens = ((coins % 100) - ones) / 10;
+    let hundreds = ((coins % 1000) - tens - ones) / 100;
 
     for (mut image, element_index) in query.iter_mut() {
         match element_index.0 {

@@ -10,6 +10,7 @@ use crate::levels::ResetLevel;
 use crate::types::GameState;
 
 use super::collision::CollisionPlugin;
+use super::components::CoinBundle;
 use super::components::EnemyBundle;
 use super::components::Item;
 use super::components::PlayerBundle;
@@ -18,6 +19,7 @@ use super::components::StairsBundle;
 use super::components::TimeToLive;
 use super::components::WallBundle;
 use super::enemy::enemy::EnemyPlugin;
+use super::events::PickupCoin;
 use super::events::PickupItem;
 use super::events::PlayerDamaged;
 use super::player::PlayerPlugin;
@@ -59,15 +61,18 @@ impl Plugin for GamePlugin {
                     .with_system(player_damaged.label("damage_calculation"))
                     .with_system(setup_item)
                     .with_system(player_picked_up_item)
+                    .with_system(player_picked_up_coin)
                     .with_system(time_to_live_system),
             )
             .register_ldtk_entity::<PlayerBundle>("Player")
             .register_ldtk_entity::<PotionBundle>("Potion")
+            .register_ldtk_entity::<CoinBundle>("Coin")
             .register_ldtk_entity::<WallBundle>("Wall")
             .register_ldtk_entity::<StairsBundle>("Stairs")
             .register_ldtk_entity::<EnemyBundle>("Enemy")
             .add_event::<PlayerDamaged>()
-            .add_event::<PickupItem>();
+            .add_event::<PickupItem>()
+            .add_event::<PickupCoin>();
     }
 }
 
@@ -119,4 +124,11 @@ fn player_picked_up_item(
     mut game_world_state: ResMut<GameWorldState>,
 ) {
     game_world_state.bork_points += event_reader.iter().count() as u32;
+}
+
+fn player_picked_up_coin(
+    mut event_reader: EventReader<PickupCoin>,
+    mut game_world_state: ResMut<GameWorldState>,
+) {
+    game_world_state.coins += event_reader.iter().count() as u32;
 }

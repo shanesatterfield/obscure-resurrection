@@ -5,7 +5,7 @@ use crate::{levels::IncrementLevel, types::GameState};
 
 use super::{
     components::GameCollisionLayers,
-    events::{PickupItem, PlayerDamaged},
+    events::{PickupCoin, PickupItem, PlayerDamaged},
 };
 
 pub struct CollisionPlugin;
@@ -16,6 +16,7 @@ impl Plugin for CollisionPlugin {
             SystemSet::on_update(GameState::InGame)
                 .with_system(player_attack_collision)
                 .with_system(player_item_collision)
+                .with_system(player_coin_collision)
                 .with_system(player_stairs_collision),
         );
     }
@@ -73,6 +74,32 @@ fn player_item_collision(
         });
 }
 
+fn player_coin_collision(
+    mut commands: Commands,
+    mut collision_events: EventReader<CollisionEvent>,
+    mut coin_pickup_event: EventWriter<PickupCoin>,
+) {
+    collision_events
+        .iter()
+        .filter(|e| e.is_started())
+        .filter_map(|event| {
+            let (entity_1, entity_2) = event.rigid_body_entities();
+            let (layers_1, layers_2) = event.collision_layers();
+
+            if is_player(layers_1) && is_coin(layers_2) {
+                Some(entity_2)
+            } else if is_coin(layers_1) && is_player(layers_2) {
+                Some(entity_1)
+            } else {
+                None
+            }
+        })
+        .for_each(|coin_entity| {
+            commands.entity(coin_entity).despawn_recursive();
+            coin_pickup_event.send(PickupCoin::default());
+        });
+}
+
 fn player_stairs_collision(
     mut commands: Commands,
     mut collision_events: EventReader<CollisionEvent>,
@@ -113,6 +140,11 @@ fn is_enemy_attack(layers: CollisionLayers) -> bool {
 fn is_item(layers: CollisionLayers) -> bool {
     !layers.contains_group(GameCollisionLayers::Player)
         && layers.contains_group(GameCollisionLayers::Item)
+}
+
+fn is_coin(layers: CollisionLayers) -> bool {
+    !layers.contains_group(GameCollisionLayers::Player)
+        && layers.contains_group(GameCollisionLayers::Coin)
 }
 
 fn is_stairs(layers: CollisionLayers) -> bool {

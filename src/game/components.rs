@@ -16,6 +16,9 @@ pub struct Enemy;
 pub struct Item;
 
 #[derive(Component, Clone, Debug, Default)]
+pub struct Coin;
+
+#[derive(Component, Clone, Debug, Default)]
 pub struct Wall;
 
 #[derive(Component, Clone, Debug, Default)]
@@ -81,6 +84,19 @@ pub struct PotionBundle {
 }
 
 #[derive(Clone, Default, Bundle, LdtkEntity)]
+pub struct CoinBundle {
+    pub coin: Coin,
+
+    #[sprite_sheet_bundle]
+    #[bundle]
+    pub sprite_sheet_bundle: SpriteSheetBundle,
+
+    #[from_entity_instance]
+    #[bundle]
+    pub collider_bundle: ColliderBundle,
+}
+
+#[derive(Clone, Default, Bundle, LdtkEntity)]
 pub struct StairsBundle {
     pub stairs: Stairs,
 
@@ -123,6 +139,7 @@ pub enum GameCollisionLayers {
     Enemy,
     EnemyAttack,
     Item,
+    Coin,
     Stairs,
 }
 
@@ -152,6 +169,7 @@ impl From<EntityInstance> for ColliderBundle {
                         GameCollisionLayers::Enemy,
                         GameCollisionLayers::EnemyAttack,
                         GameCollisionLayers::Item,
+                        GameCollisionLayers::Coin,
                         GameCollisionLayers::Stairs,
                     ]),
                 rigid_body: RigidBody::Dynamic,
@@ -181,6 +199,18 @@ impl From<EntityInstance> for ColliderBundle {
                 },
                 collision_layers: CollisionLayers::none()
                     .with_group(GameCollisionLayers::Item)
+                    .with_mask(GameCollisionLayers::Player),
+                rigid_body: RigidBody::Sensor,
+                rotation_constraints,
+                ..Default::default()
+            },
+            "Coin" => ColliderBundle {
+                collider: CollisionShape::Cuboid {
+                    half_extends: Vec3::new(4., 4., 0.),
+                    border_radius: None,
+                },
+                collision_layers: CollisionLayers::none()
+                    .with_group(GameCollisionLayers::Coin)
                     .with_mask(GameCollisionLayers::Player),
                 rigid_body: RigidBody::Sensor,
                 rotation_constraints,
