@@ -19,6 +19,9 @@ pub struct HealthContainerImage;
 #[derive(Component, Default, Clone, Debug)]
 pub struct BorkPointNumber;
 
+#[derive(Component, Default, Clone, Debug)]
+pub struct CoinNumber;
+
 pub struct UiPlugin;
 
 impl Plugin for UiPlugin {
@@ -27,7 +30,8 @@ impl Plugin for UiPlugin {
             .add_system_set(
                 SystemSet::on_update(GameState::InGame)
                     .with_system(update_health_containers.after("damage_calculation"))
-                    .with_system(update_potion_counter),
+                    .with_system(update_potion_counter)
+                    .with_system(update_coin_counter),
             )
             .add_system_set(SystemSet::on_exit(GameState::InGame).with_system(cleanup));
     }
@@ -106,6 +110,32 @@ fn spawn_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
                             .insert(UiElementIndex(4 - index))
                             .insert(BorkPointNumber::default());
                     }
+
+                    // Coin Counter
+                    parent.spawn_bundle(ImageBundle {
+                        style: Style {
+                            size: Size::new(Val::Px(8. * WINDOW_SCALE), Val::Px(8. * WINDOW_SCALE)),
+                            ..Default::default()
+                        },
+                        image: asset_server.load("icons/coin.png").into(),
+                        ..Default::default()
+                    });
+                    for index in 1..=3 {
+                        parent
+                            .spawn_bundle(ImageBundle {
+                                style: Style {
+                                    size: Size::new(
+                                        Val::Px(8. * WINDOW_SCALE),
+                                        Val::Px(8. * WINDOW_SCALE),
+                                    ),
+                                    ..Default::default()
+                                },
+                                image: asset_server.load("text/tile-0.png").into(),
+                                ..Default::default()
+                            })
+                            .insert(UiElementIndex(4 - index))
+                            .insert(CoinNumber::default());
+                    }
                 });
         });
 }
@@ -136,6 +166,32 @@ fn update_potion_counter(
     let ones = bork_points % 10;
     let tens = (bork_points % 100) - ones;
     let hundreds = (bork_points % 1000) - tens - ones;
+
+    for (mut image, element_index) in query.iter_mut() {
+        match element_index.0 {
+            1 => {
+                *image = number_to_image(asset_server.clone(), ones).into();
+            }
+            2 => {
+                *image = number_to_image(asset_server.clone(), tens).into();
+            }
+            3 => {
+                *image = number_to_image(asset_server.clone(), hundreds).into();
+            }
+            _ => {}
+        }
+    }
+}
+
+fn update_coin_counter(
+    game_world_state: Res<GameWorldState>,
+    asset_server: Res<AssetServer>,
+    mut query: Query<(&mut UiImage, &UiElementIndex), With<CoinNumber>>,
+) {
+    let coins = game_world_state.coins;
+    let ones = coins % 10;
+    let tens = (coins % 100) - ones;
+    let hundreds = (coins % 1000) - tens - ones;
 
     for (mut image, element_index) in query.iter_mut() {
         match element_index.0 {

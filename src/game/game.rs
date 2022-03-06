@@ -32,6 +32,7 @@ pub struct GameWorldState {
     pub player_health: u32,
     pub potion_inventory: u32,
     pub bork_points: u32,
+    pub coins: u32,
 }
 
 impl Default for GameWorldState {
@@ -40,6 +41,7 @@ impl Default for GameWorldState {
             player_health: PLAYER_MAX_HEALTH,
             potion_inventory: 0,
             bork_points: 0,
+            coins: 0,
         }
     }
 }
