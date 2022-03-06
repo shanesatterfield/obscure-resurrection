@@ -18,6 +18,9 @@ pub struct Item;
 #[derive(Component, Clone, Debug, Default)]
 pub struct Wall;
 
+#[derive(Component, Clone, Debug, Default)]
+pub struct Stairs;
+
 #[derive(Component, Default, Clone)]
 pub struct Speed(pub f32);
 
@@ -77,6 +80,19 @@ pub struct PotionBundle {
     pub collider_bundle: ColliderBundle,
 }
 
+#[derive(Clone, Default, Bundle, LdtkEntity)]
+pub struct StairsBundle {
+    pub stairs: Stairs,
+
+    #[sprite_sheet_bundle]
+    #[bundle]
+    pub sprite_sheet_bundle: SpriteSheetBundle,
+
+    #[from_entity_instance]
+    #[bundle]
+    pub collider_bundle: ColliderBundle,
+}
+
 #[derive(Bundle)]
 pub struct ProjectileBundle {
     pub ttl: TimeToLive,
@@ -107,6 +123,7 @@ pub enum GameCollisionLayers {
     Enemy,
     EnemyAttack,
     Item,
+    Stairs,
 }
 
 #[derive(Clone, Debug, Default, Bundle, LdtkIntCell)]
@@ -135,6 +152,7 @@ impl From<EntityInstance> for ColliderBundle {
                         GameCollisionLayers::Enemy,
                         GameCollisionLayers::EnemyAttack,
                         GameCollisionLayers::Item,
+                        GameCollisionLayers::Stairs,
                     ]),
                 rigid_body: RigidBody::Dynamic,
                 rotation_constraints,
@@ -158,11 +176,23 @@ impl From<EntityInstance> for ColliderBundle {
             },
             "Potion" => ColliderBundle {
                 collider: CollisionShape::Cuboid {
-                    half_extends: Vec3::new(8., 8., 0.),
+                    half_extends: Vec3::new(4., 4., 0.),
                     border_radius: None,
                 },
                 collision_layers: CollisionLayers::none()
                     .with_group(GameCollisionLayers::Item)
+                    .with_mask(GameCollisionLayers::Player),
+                rigid_body: RigidBody::Sensor,
+                rotation_constraints,
+                ..Default::default()
+            },
+            "Stairs" => ColliderBundle {
+                collider: CollisionShape::Cuboid {
+                    half_extends: Vec3::new(4., 4., 0.),
+                    border_radius: None,
+                },
+                collision_layers: CollisionLayers::none()
+                    .with_group(GameCollisionLayers::Stairs)
                     .with_mask(GameCollisionLayers::Player),
                 rigid_body: RigidBody::Sensor,
                 rotation_constraints,

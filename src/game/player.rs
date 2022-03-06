@@ -1,11 +1,10 @@
 use bevy::prelude::*;
-use bevy::sprite::collide_aabb::collide;
 use heron::prelude::*;
 
 use crate::types::GameState;
 
 use super::components::{
-    BorkBundle, ColliderBundle, GameCollisionLayers, Item, Player, Speed, TimeToLive,
+    BorkBundle, ColliderBundle, GameCollisionLayers, Player, Speed, TimeToLive,
 };
 
 pub struct PlayerPlugin;
@@ -16,7 +15,6 @@ impl Plugin for PlayerPlugin {
             .add_system_set(
                 SystemSet::on_update(GameState::InGame)
                     .with_system(setup_player)
-                    .with_system(pick_up_item)
                     .with_system(bork),
             );
     }
@@ -47,22 +45,6 @@ fn move_player(
 
     for (speed, mut velocity) in query.iter_mut() {
         *velocity = Velocity::from_linear(direction.extend(0.).normalize_or_zero() * speed.0);
-    }
-}
-
-fn pick_up_item(
-    mut commands: Commands,
-    player_query: Query<&Transform, With<Player>>,
-    item_query: Query<(Entity, &Transform), With<Item>>,
-) {
-    let sprite_sizer = Vec2::new(8., 8.);
-    for player_transform in player_query.iter() {
-        let player = player_transform.translation;
-        for (entity, transform) in item_query.iter() {
-            if let Some(_) = collide(player, sprite_sizer, transform.translation, sprite_sizer) {
-                commands.entity(entity).despawn();
-            }
-        }
     }
 }
 

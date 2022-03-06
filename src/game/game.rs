@@ -6,7 +6,6 @@ use bevy_ecs_ldtk::prelude::*;
 use rand::thread_rng;
 use rand::Rng;
 
-use crate::levels::IncrementLevel;
 use crate::levels::ResetLevel;
 use crate::types::GameState;
 
@@ -15,6 +14,7 @@ use super::components::EnemyBundle;
 use super::components::Item;
 use super::components::PlayerBundle;
 use super::components::PotionBundle;
+use super::components::StairsBundle;
 use super::components::TimeToLive;
 use super::components::WallBundle;
 use super::enemy::enemy::EnemyPlugin;
@@ -27,8 +27,6 @@ pub const PLAYER_MAX_HEALTH: u32 = 3;
 pub struct GamePlugin;
 
 pub struct GameWorldState {
-    pub is_level_loaded: bool,
-    pub potion_count: u32,
     pub potion_inventory: u32,
     pub player_health: u32,
 }
@@ -40,8 +38,6 @@ impl Plugin for GamePlugin {
             .add_plugin(UiPlugin)
             .add_plugin(CollisionPlugin)
             .insert_resource(GameWorldState {
-                is_level_loaded: false,
-                potion_count: 0,
                 potion_inventory: 0,
                 player_health: PLAYER_MAX_HEALTH,
             })
@@ -49,13 +45,13 @@ impl Plugin for GamePlugin {
             .add_system_set(
                 SystemSet::on_update(GameState::InGame)
                     .with_system(player_damaged.label("damage_calculation"))
-                    .with_system(change_level)
                     .with_system(setup_item)
                     .with_system(time_to_live_system),
             )
             .register_ldtk_entity::<PlayerBundle>("Player")
             .register_ldtk_entity::<PotionBundle>("Potion")
             .register_ldtk_entity::<WallBundle>("Wall")
+            .register_ldtk_entity::<StairsBundle>("Stairs")
             .register_ldtk_entity::<EnemyBundle>("Enemy")
             .add_event::<PlayerDamaged>();
     }
@@ -66,37 +62,16 @@ fn reset_game_world(
     mut reset_level_event: EventWriter<ResetLevel>,
 ) {
     *game_world_state = GameWorldState {
-        is_level_loaded: false,
-        potion_count: 0,
         potion_inventory: 0,
         player_health: PLAYER_MAX_HEALTH,
     };
     reset_level_event.send(ResetLevel::default());
 }
 
-fn setup_item(
-    mut level_state: ResMut<GameWorldState>,
-    mut query: Query<&mut TextureAtlasSprite, Added<Item>>,
-) {
+fn setup_item(mut query: Query<&mut TextureAtlasSprite, Added<Item>>) {
     let mut rng = thread_rng();
     for mut sprite in query.iter_mut() {
         sprite.index = rng.gen_range(35, 37);
-
-        level_state.potion_count += 1;
-        if !level_state.is_level_loaded {
-            level_state.is_level_loaded = true;
-        }
-    }
-}
-
-fn change_level(
-    mut game_world_state: ResMut<GameWorldState>,
-    query: Query<Entity, With<Item>>,
-    mut increment_level: EventWriter<IncrementLevel>,
-) {
-    if query.is_empty() && game_world_state.is_level_loaded {
-        game_world_state.is_level_loaded = false;
-        increment_level.send(IncrementLevel::default());
     }
 }
 
