@@ -8,4 +8,7 @@ pub struct PickupItem;
 pub struct PickupCoin;
 
 #[derive(Default, Clone, Debug)]
+pub struct EnemyAttackBlocked;
+
+#[derive(Default, Clone, Debug)]
 pub struct GameOver;

@@ -13,6 +13,7 @@ use super::components::StairsBundle;
 use super::components::TimeToLive;
 use super::components::WallBundle;
 use super::enemy::enemy::EnemyPlugin;
+use super::events::EnemyAttackBlocked;
 use super::events::PickupCoin;
 use super::events::PickupItem;
 use super::events::PlayerDamaged;
@@ -67,7 +68,8 @@ impl Plugin for GamePlugin {
             .register_ldtk_entity::<EnemyBundle>("Enemy")
             .add_event::<PlayerDamaged>()
             .add_event::<PickupItem>()
-            .add_event::<PickupCoin>();
+            .add_event::<PickupCoin>()
+            .add_event::<EnemyAttackBlocked>();
     }
 }
 
