@@ -55,6 +55,6 @@ fn enemy_attack_blocked(
     audio: Res<Audio>,
 ) {
     for _ in event_reader.iter() {
-        audio.play(asset_server.load("audio/coin_sfx.wav"));
+        audio.play(asset_server.load("audio/block_sfx.wav"));
     }
 }
