@@ -1,10 +1,5 @@
-extern crate rand;
-
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
-
-use rand::thread_rng;
-use rand::Rng;
 
 use crate::levels::ResetLevel;
 use crate::types::GameState;
@@ -12,7 +7,6 @@ use crate::types::GameState;
 use super::collision::CollisionPlugin;
 use super::components::CoinBundle;
 use super::components::EnemyBundle;
-use super::components::Item;
 use super::components::PlayerBundle;
 use super::components::PotionBundle;
 use super::components::StairsBundle;
@@ -23,6 +17,7 @@ use super::events::PickupCoin;
 use super::events::PickupItem;
 use super::events::PlayerDamaged;
 use super::player::PlayerPlugin;
+use super::sfx::SfxPlugin;
 use super::ui::UiPlugin;
 
 pub const PLAYER_MAX_HEALTH: u32 = 3;
@@ -53,13 +48,13 @@ impl Plugin for GamePlugin {
         app.add_plugin(PlayerPlugin)
             .add_plugin(EnemyPlugin)
             .add_plugin(UiPlugin)
+            .add_plugin(SfxPlugin)
             .add_plugin(CollisionPlugin)
             .insert_resource(GameWorldState::default())
             .add_system_set(SystemSet::on_enter(GameState::InGame).with_system(reset_game_world))
             .add_system_set(
                 SystemSet::on_update(GameState::InGame)
                     .with_system(player_damaged.label("damage_calculation"))
-                    .with_system(setup_item)
                     .with_system(player_picked_up_item)
                     .with_system(player_picked_up_coin)
                     .with_system(time_to_live_system),
@@ -82,13 +77,6 @@ fn reset_game_world(
 ) {
     *game_world_state = GameWorldState::default();
     reset_level_event.send(ResetLevel::default());
-}
-
-fn setup_item(mut query: Query<&mut TextureAtlasSprite, Added<Item>>) {
-    let mut rng = thread_rng();
-    for mut sprite in query.iter_mut() {
-        sprite.index = rng.gen_range(35, 37);
-    }
 }
 
 fn time_to_live_system(

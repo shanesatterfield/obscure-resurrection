@@ -7,8 +7,7 @@ resolver = "2"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bevy = "0.6.1"
-rand = { version = "0.7.3", features = ["wasm-bindgen"] }
+bevy = { version = "0.6.1", features = [ "bevy_gilrs", "bevy_winit", "render", "png", "hdr", "x11", "filesystem_watcher" ] }
 
 # Audio plugin
 bevy_kira_audio = { version = "0.8.0", features = ["wav"] }
