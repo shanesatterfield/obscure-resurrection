@@ -5,6 +5,7 @@ use crate::types::GameState;
 
 use super::{
     components::{BorkBundle, ColliderBundle, GameCollisionLayers, Player, Speed, TimeToLive},
+    events::PlayerBorked,
     game::GameWorldState,
 };
 
@@ -55,6 +56,7 @@ fn bork(
     keyboard_input: Res<Input<KeyCode>>,
     asset_server: Res<AssetServer>,
     query: Query<Entity, With<Player>>,
+    mut event_writer: EventWriter<PlayerBorked>,
 ) {
     if !keyboard_input.just_pressed(KeyCode::Space) {
         return;
@@ -105,5 +107,7 @@ fn bork(
             .id();
 
         commands.entity(entity).push_children(&[child]);
+
+        event_writer.send(PlayerBorked::default());
     }
 }

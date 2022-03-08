@@ -3,7 +3,7 @@ use bevy_kira_audio::Audio;
 
 use crate::types::GameState;
 
-use super::events::{EnemyAttackBlocked, PickupCoin, PickupItem, PlayerDamaged};
+use super::events::{EnemyAttackBlocked, PickupCoin, PickupItem, PlayerBorked, PlayerDamaged};
 
 pub struct SfxPlugin;
 
@@ -14,7 +14,8 @@ impl Plugin for SfxPlugin {
                 .with_system(player_picked_up_item)
                 .with_system(player_picked_up_coin_sfx)
                 .with_system(player_damaged_sfx)
-                .with_system(enemy_attack_blocked),
+                .with_system(enemy_attack_blocked)
+                .with_system(player_borked_sfx),
         );
     }
 }
@@ -56,5 +57,15 @@ fn enemy_attack_blocked(
 ) {
     for _ in event_reader.iter() {
         audio.play(asset_server.load("audio/block_sfx.wav"));
+    }
+}
+
+fn player_borked_sfx(
+    mut event_reader: EventReader<PlayerBorked>,
+    asset_server: Res<AssetServer>,
+    audio: Res<Audio>,
+) {
+    for _ in event_reader.iter() {
+        audio.play(asset_server.load("audio/bork_sfx.wav"));
     }
 }

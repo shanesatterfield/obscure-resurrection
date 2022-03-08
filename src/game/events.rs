@@ -11,4 +11,7 @@ pub struct PickupCoin;
 pub struct EnemyAttackBlocked;
 
 #[derive(Default, Clone, Debug)]
+pub struct PlayerBorked;
+
+#[derive(Default, Clone, Debug)]
 pub struct GameOver;

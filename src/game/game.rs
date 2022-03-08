@@ -16,6 +16,7 @@ use super::enemy::enemy::EnemyPlugin;
 use super::events::EnemyAttackBlocked;
 use super::events::PickupCoin;
 use super::events::PickupItem;
+use super::events::PlayerBorked;
 use super::events::PlayerDamaged;
 use super::player::PlayerPlugin;
 use super::sfx::SfxPlugin;
@@ -69,7 +70,8 @@ impl Plugin for GamePlugin {
             .add_event::<PlayerDamaged>()
             .add_event::<PickupItem>()
             .add_event::<PickupCoin>()
-            .add_event::<EnemyAttackBlocked>();
+            .add_event::<EnemyAttackBlocked>()
+            .add_event::<PlayerBorked>();
     }
 }
 
