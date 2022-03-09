@@ -8,6 +8,8 @@ use super::{
     events::{EnemyAttackBlocked, PickupCoin, PickupItem, PlayerDamaged},
 };
 
+type CollisionLayerFilter = fn(CollisionLayers) -> bool;
+
 pub struct CollisionPlugin;
 
 impl Plugin for CollisionPlugin {
@@ -25,112 +27,91 @@ impl Plugin for CollisionPlugin {
 
 fn player_attack_collision(
     mut commands: Commands,
-    mut collision_events: EventReader<CollisionEvent>,
+    collision_events: EventReader<CollisionEvent>,
     mut event_writer: EventWriter<PlayerDamaged>,
 ) {
-    collision_events
-        .iter()
-        .filter(|e| e.is_started())
-        .filter_map(|event| {
-            let (entity_1, entity_2) = event.rigid_body_entities();
-            let (layers_1, layers_2) = event.collision_layers();
-
-            if is_player(layers_1) && is_enemy_attack(layers_2) {
-                Some(entity_2)
-            } else if is_enemy_attack(layers_1) && is_player(layers_2) {
-                Some(entity_1)
-            } else {
-                None
-            }
-        })
-        .for_each(|enemy_attack_entity| {
+    filter_events(
+        collision_events,
+        is_enemy_attack,
+        is_player,
+        move |enemy_attack_entity, _| {
             event_writer.send(PlayerDamaged::default());
             commands.entity(enemy_attack_entity).despawn();
-        });
+        },
+    );
 }
 
 fn player_item_collision(
     mut commands: Commands,
-    mut collision_events: EventReader<CollisionEvent>,
+    collision_events: EventReader<CollisionEvent>,
     mut event_writer: EventWriter<PickupItem>,
 ) {
-    collision_events
-        .iter()
-        .filter(|e| e.is_started())
-        .filter_map(|event| {
-            let (entity_1, entity_2) = event.rigid_body_entities();
-            let (layers_1, layers_2) = event.collision_layers();
-
-            if is_player(layers_1) && is_item(layers_2) {
-                Some(entity_2)
-            } else if is_item(layers_1) && is_player(layers_2) {
-                Some(entity_1)
-            } else {
-                None
-            }
-        })
-        .for_each(|item_entity| {
+    filter_events(
+        collision_events,
+        is_item,
+        is_player,
+        move |item_entity, _| {
             commands.entity(item_entity).despawn_recursive();
             event_writer.send(PickupItem::default());
-        });
+        },
+    );
 }
 
 fn player_coin_collision(
     mut commands: Commands,
-    mut collision_events: EventReader<CollisionEvent>,
+    collision_events: EventReader<CollisionEvent>,
     mut event_writer: EventWriter<PickupCoin>,
 ) {
-    collision_events
-        .iter()
-        .filter(|e| e.is_started())
-        .filter_map(|event| {
-            let (entity_1, entity_2) = event.rigid_body_entities();
-            let (layers_1, layers_2) = event.collision_layers();
-
-            if is_player(layers_1) && is_coin(layers_2) {
-                Some(entity_2)
-            } else if is_coin(layers_1) && is_player(layers_2) {
-                Some(entity_1)
-            } else {
-                None
-            }
-        })
-        .for_each(|coin_entity| {
+    filter_events(
+        collision_events,
+        is_coin,
+        is_player,
+        move |coin_entity, _| {
             commands.entity(coin_entity).despawn_recursive();
             event_writer.send(PickupCoin::default());
-        });
+        },
+    );
 }
 
 fn player_stairs_collision(
     mut commands: Commands,
-    mut collision_events: EventReader<CollisionEvent>,
+    collision_events: EventReader<CollisionEvent>,
     mut event_writer: EventWriter<IncrementLevel>,
 ) {
-    collision_events
-        .iter()
-        .filter(|e| e.is_started())
-        .filter_map(|event| {
-            let (entity_1, entity_2) = event.rigid_body_entities();
-            let (layers_1, layers_2) = event.collision_layers();
-
-            if is_player(layers_1) && is_stairs(layers_2) {
-                Some(entity_2)
-            } else if is_stairs(layers_1) && is_player(layers_2) {
-                Some(entity_1)
-            } else {
-                None
-            }
-        })
-        .for_each(|stairs_entity| {
+    filter_events(
+        collision_events,
+        is_stairs,
+        is_player,
+        move |stairs_entity, _| {
             commands.entity(stairs_entity).despawn_recursive();
             event_writer.send(IncrementLevel::default());
-        });
+        },
+    );
 }
 
 fn player_attack_enemy_attack_collision(
-    mut collision_events: EventReader<CollisionEvent>,
+    collision_events: EventReader<CollisionEvent>,
     mut event_writer: EventWriter<EnemyAttackBlocked>,
 ) {
+    filter_events(
+        collision_events,
+        is_enemy_attack,
+        is_player_attack,
+        move |_, _| {
+            event_writer.send(EnemyAttackBlocked::default());
+        },
+    );
+}
+
+fn filter_events<F>(
+    mut collision_events: EventReader<CollisionEvent>,
+    expected_filter: CollisionLayerFilter,
+    collided_with: CollisionLayerFilter,
+    mut callback: F,
+) -> ()
+where
+    F: FnMut(Entity, Entity),
+{
     collision_events
         .iter()
         .filter(|e| e.is_started())
@@ -138,16 +119,16 @@ fn player_attack_enemy_attack_collision(
             let (entity_1, entity_2) = event.rigid_body_entities();
             let (layers_1, layers_2) = event.collision_layers();
 
-            if is_player_attack(layers_1) && is_enemy_attack(layers_2) {
-                Some(entity_2)
-            } else if is_enemy_attack(layers_1) && is_player_attack(layers_2) {
-                Some(entity_1)
+            if expected_filter(layers_1) && collided_with(layers_2) {
+                Some((entity_1, entity_2))
+            } else if collided_with(layers_1) && expected_filter(layers_2) {
+                Some((entity_2, entity_1))
             } else {
                 None
             }
         })
-        .for_each(|_| {
-            event_writer.send(EnemyAttackBlocked::default());
+        .for_each(|(entity1, entity2)| {
+            callback(entity1, entity2);
         });
 }
 
