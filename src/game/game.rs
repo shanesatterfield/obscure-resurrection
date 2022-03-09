@@ -4,7 +4,7 @@ use bevy_ecs_ldtk::prelude::*;
 use crate::levels::ResetLevel;
 use crate::types::GameState;
 
-use super::collision::CollisionPlugin;
+use super::collision::plugin::CollisionPlugin;
 use super::components::CoinBundle;
 use super::components::EnemyBundle;
 use super::components::PlayerBundle;

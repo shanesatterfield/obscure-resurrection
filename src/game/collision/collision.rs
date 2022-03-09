@@ -1,31 +1,11 @@
+use crate::game::events::*;
+use crate::levels::IncrementLevel;
 use bevy::prelude::*;
-use heron::{CollisionEvent, CollisionLayers};
+use heron::CollisionEvent;
 
-use crate::{levels::IncrementLevel, types::GameState};
+use super::layer_filters::*;
 
-use super::{
-    components::GameCollisionLayers,
-    events::{EnemyAttackBlocked, PickupCoin, PickupItem, PlayerDamaged},
-};
-
-type CollisionLayerFilter = fn(CollisionLayers) -> bool;
-
-pub struct CollisionPlugin;
-
-impl Plugin for CollisionPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_system_set(
-            SystemSet::on_update(GameState::InGame)
-                .with_system(player_attack_collision)
-                .with_system(player_item_collision)
-                .with_system(player_coin_collision)
-                .with_system(player_stairs_collision)
-                .with_system(player_attack_enemy_attack_collision),
-        );
-    }
-}
-
-fn player_attack_collision(
+pub fn player_attack_collision(
     mut commands: Commands,
     collision_events: EventReader<CollisionEvent>,
     mut event_writer: EventWriter<PlayerDamaged>,
@@ -41,7 +21,7 @@ fn player_attack_collision(
     );
 }
 
-fn player_item_collision(
+pub fn player_item_collision(
     mut commands: Commands,
     collision_events: EventReader<CollisionEvent>,
     mut event_writer: EventWriter<PickupItem>,
@@ -57,7 +37,7 @@ fn player_item_collision(
     );
 }
 
-fn player_coin_collision(
+pub fn player_coin_collision(
     mut commands: Commands,
     collision_events: EventReader<CollisionEvent>,
     mut event_writer: EventWriter<PickupCoin>,
@@ -73,7 +53,7 @@ fn player_coin_collision(
     );
 }
 
-fn player_stairs_collision(
+pub fn player_stairs_collision(
     mut commands: Commands,
     collision_events: EventReader<CollisionEvent>,
     mut event_writer: EventWriter<IncrementLevel>,
@@ -89,7 +69,7 @@ fn player_stairs_collision(
     );
 }
 
-fn player_attack_enemy_attack_collision(
+pub fn player_attack_enemy_attack_collision(
     collision_events: EventReader<CollisionEvent>,
     mut event_writer: EventWriter<EnemyAttackBlocked>,
 ) {
@@ -103,7 +83,7 @@ fn player_attack_enemy_attack_collision(
     );
 }
 
-fn filter_events<F>(
+pub fn filter_events<F>(
     mut collision_events: EventReader<CollisionEvent>,
     expected_filter: CollisionLayerFilter,
     collided_with: CollisionLayerFilter,
@@ -130,35 +110,4 @@ where
         .for_each(|(entity1, entity2)| {
             callback(entity1, entity2);
         });
-}
-
-fn is_player(layers: CollisionLayers) -> bool {
-    layers.contains_group(GameCollisionLayers::Player)
-        && !layers.contains_group(GameCollisionLayers::Enemy)
-        && !layers.contains_group(GameCollisionLayers::EnemyAttack)
-}
-
-fn is_enemy_attack(layers: CollisionLayers) -> bool {
-    !layers.contains_group(GameCollisionLayers::Player)
-        && layers.contains_group(GameCollisionLayers::EnemyAttack)
-}
-
-fn is_item(layers: CollisionLayers) -> bool {
-    !layers.contains_group(GameCollisionLayers::Player)
-        && layers.contains_group(GameCollisionLayers::Item)
-}
-
-fn is_coin(layers: CollisionLayers) -> bool {
-    !layers.contains_group(GameCollisionLayers::Player)
-        && layers.contains_group(GameCollisionLayers::Coin)
-}
-
-fn is_stairs(layers: CollisionLayers) -> bool {
-    !layers.contains_group(GameCollisionLayers::Player)
-        && layers.contains_group(GameCollisionLayers::Stairs)
-}
-
-fn is_player_attack(layers: CollisionLayers) -> bool {
-    !layers.contains_group(GameCollisionLayers::EnemyAttack)
-        && layers.contains_group(GameCollisionLayers::PlayerAttack)
 }
