@@ -3,6 +3,7 @@ pub mod components;
 pub mod enemy;
 pub mod events;
 pub mod game;
+pub mod level;
 pub mod player;
 pub mod sfx;
 pub mod ui;

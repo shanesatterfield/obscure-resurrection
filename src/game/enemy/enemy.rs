@@ -3,10 +3,12 @@ use big_brain::prelude::FirstToScore;
 use big_brain::prelude::Thinker;
 use heron::prelude::*;
 
+use crate::game::level::components::ColliderBundle;
+use crate::game::level::components::ProjectileBundle;
 use crate::{game::components::GameCollisionLayers, types::GameState};
 
 use super::{
-    super::components::{ColliderBundle, Enemy, Player, ProjectileBundle, TimeToLive},
+    super::components::{Enemy, Player, TimeToLive},
     components::{Aggroable, Aggroed, AttackPlayer, Attacking},
     shaman_ai::ShamanAi,
 };

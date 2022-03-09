@@ -5,19 +5,16 @@ use crate::levels::ResetLevel;
 use crate::types::GameState;
 
 use super::collision::plugin::CollisionPlugin;
-use super::components::CoinBundle;
-use super::components::EnemyBundle;
-use super::components::PlayerBundle;
-use super::components::PotionBundle;
-use super::components::StairsBundle;
 use super::components::TimeToLive;
-use super::components::WallBundle;
 use super::enemy::enemy::EnemyPlugin;
 use super::events::EnemyAttackBlocked;
 use super::events::PickupCoin;
 use super::events::PickupItem;
 use super::events::PlayerBorked;
 use super::events::PlayerDamaged;
+use super::level::components::{
+    CoinBundle, EnemyBundle, PlayerBundle, PotionBundle, StairsBundle, WallBundle,
+};
 use super::player::PlayerPlugin;
 use super::sfx::SfxPlugin;
 use super::ui::UiPlugin;

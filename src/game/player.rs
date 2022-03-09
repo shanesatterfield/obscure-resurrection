@@ -4,9 +4,10 @@ use heron::prelude::*;
 use crate::types::GameState;
 
 use super::{
-    components::{BorkBundle, ColliderBundle, GameCollisionLayers, Player, Speed, TimeToLive},
+    components::{GameCollisionLayers, Player, Speed, TimeToLive},
     events::PlayerBorked,
     game::GameWorldState,
+    level::components::{BorkBundle, ColliderBundle},
 };
 
 pub struct PlayerPlugin;
