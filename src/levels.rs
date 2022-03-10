@@ -21,7 +21,7 @@ impl Plugin for LevelsPlugin {
         app.insert_resource(LevelSelection::Index(0))
             .insert_resource(LevelState {
                 current_level: 0,
-                max_levels: 2,
+                max_levels: 3,
             })
             .add_event::<IncrementLevel>()
             .add_event::<ResetLevel>()
