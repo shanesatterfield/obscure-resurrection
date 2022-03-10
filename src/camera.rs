@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use heron::PhysicsSystem;
 
 #[derive(Component, Default)]
 pub struct CameraFollowing;
@@ -16,7 +17,11 @@ impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
         app.add_startup_system(setup)
             .add_system(toggle_projection)
-            .add_system_to_stage(CoreStage::Last, camera_follow_player);
+            .add_system(
+                camera_follow_player
+                    .after(PhysicsSystem::TransformUpdate)
+                    .after(PhysicsSystem::VelocityUpdate),
+            );
     }
 }
 

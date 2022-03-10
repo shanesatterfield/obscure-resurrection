@@ -103,7 +103,7 @@ fn player_damaged(
         }
 
         if game_world_state.player_health == 0 {
-            game_state.set(GameState::GameOver).unwrap();
+            game_state.set(GameState::GameOver).ok();
         }
     }
 }

@@ -14,18 +14,22 @@ pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_to_stage(CoreStage::PreUpdate, move_player.label("apply_movement"))
-            .add_system_set(
-                SystemSet::on_update(GameState::InGame)
-                    .with_system(setup_player)
-                    .with_system(bork),
-            );
+        app.add_system_set(
+            SystemSet::on_update(GameState::InGame)
+                .with_system(
+                    move_player
+                        .before(PhysicsSystem::TransformUpdate)
+                        .before(PhysicsSystem::VelocityUpdate),
+                )
+                .with_system(setup_player)
+                .with_system(bork),
+        );
     }
 }
 
 fn setup_player(mut query: Query<&mut Speed, Added<Player>>) {
     for mut speed in query.iter_mut() {
-        speed.0 = 50.;
+        speed.0 = 100.;
     }
 }
 
