@@ -29,6 +29,7 @@ pub struct GameWorldState {
     pub potion_inventory: u32,
     pub bork_points: u32,
     pub coins: u32,
+    pub play_time: f64,
 }
 
 impl Default for GameWorldState {
@@ -38,6 +39,7 @@ impl Default for GameWorldState {
             potion_inventory: 0,
             bork_points: 0,
             coins: 0,
+            play_time: 0.,
         }
     }
 }
@@ -56,7 +58,8 @@ impl Plugin for GamePlugin {
                     .with_system(player_damaged.label("damage_calculation"))
                     .with_system(player_picked_up_item)
                     .with_system(player_picked_up_coin)
-                    .with_system(time_to_live_system),
+                    .with_system(time_to_live_system)
+                    .with_system(increase_play_time),
             )
             .register_ldtk_entity::<PlayerBundle>("Player")
             .register_ldtk_entity::<PotionBundle>("Potion")
@@ -120,4 +123,8 @@ fn player_picked_up_coin(
     mut game_world_state: ResMut<GameWorldState>,
 ) {
     game_world_state.coins += event_reader.iter().count() as u32;
+}
+
+fn increase_play_time(time: Res<Time>, mut game_world_state: ResMut<GameWorldState>) {
+    game_world_state.play_time += time.delta_seconds_f64();
 }

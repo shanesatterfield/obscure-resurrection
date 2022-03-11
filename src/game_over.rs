@@ -50,7 +50,16 @@ fn spawn_ui(
                             },
                         },
                         TextSection {
-                            value: format!("You collected {} coins\n", game_world_state.coins)
+                            value: format!("You collected {} coins\n", game_world_state.coins,)
+                                .to_string(),
+                            style: TextStyle {
+                                font: asset_server.load("ConsolaMono.ttf"),
+                                font_size: 80.,
+                                color: Color::WHITE,
+                            },
+                        },
+                        TextSection {
+                            value: format!("In {} seconds\n", game_world_state.play_time as u32,)
                                 .to_string(),
                             style: TextStyle {
                                 font: asset_server.load("ConsolaMono.ttf"),
