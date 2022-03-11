@@ -84,7 +84,7 @@ fn bork(
         // Spawn the bork as a child of the player
         let child = commands
             .spawn_bundle(BorkBundle {
-                ttl: TimeToLive(Timer::from_seconds(5., false)),
+                ttl: TimeToLive(Timer::from_seconds(3., false)),
 
                 sprite_bundle: SpriteBundle {
                     texture: asset_server.load("projectiles/bork_3.png"),

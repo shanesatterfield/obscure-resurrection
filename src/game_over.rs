@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::types::GameState;
+use crate::{game::game::GameWorldState, types::GameState};
 
 #[derive(Component, Default, Clone, Debug)]
 pub struct OnlyInGameOver;
@@ -15,7 +15,11 @@ impl Plugin for GameOverPlugin {
     }
 }
 
-fn spawn_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
+fn spawn_ui(
+    mut commands: Commands,
+    game_world_state: Res<GameWorldState>,
+    asset_server: Res<AssetServer>,
+) {
     commands
         .spawn_bundle(NodeBundle {
             style: Style {
@@ -42,6 +46,15 @@ fn spawn_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
                             style: TextStyle {
                                 font: asset_server.load("ConsolaMono.ttf"),
                                 font_size: 120.,
+                                color: Color::WHITE,
+                            },
+                        },
+                        TextSection {
+                            value: format!("You collected {} coins\n", game_world_state.coins)
+                                .to_string(),
+                            style: TextStyle {
+                                font: asset_server.load("ConsolaMono.ttf"),
+                                font_size: 80.,
                                 color: Color::WHITE,
                             },
                         },
