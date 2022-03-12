@@ -2,8 +2,6 @@ use bevy::{prelude::*, render::render_resource::TextureUsages};
 
 use heron::prelude::Velocity;
 
-use crate::types::GameState;
-
 use super::components::{FacingDirection, HorizontalDirection};
 
 pub struct TexturePlugin;
@@ -16,21 +14,10 @@ pub struct Textures {
 impl Plugin for TexturePlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(Textures::default())
-            .add_system_set(SystemSet::on_enter(GameState::MainMenu).with_system(load_assets))
             .add_system(change_direction)
             .add_system(set_texture_filters_to_nearest)
             .add_system(flip_assets);
     }
-}
-
-fn load_assets(
-    asset_server: Res<AssetServer>,
-    mut textures: ResMut<Textures>,
-    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
-) {
-    let texture_handle = asset_server.load("oracle_1bit_assets/8x8.png");
-    let texture_atlas = TextureAtlas::from_grid(texture_handle, Vec2::new(8., 8.), 8, 12);
-    textures.texture_atlas_handle = texture_atlases.add(texture_atlas);
 }
 
 fn change_direction(mut query: Query<(&Velocity, &mut FacingDirection), Changed<Velocity>>) {

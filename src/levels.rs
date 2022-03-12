@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 
-use crate::types::GameState;
+use crate::types::{GameState, LevelAssets};
 
 #[derive(Default, Clone, Debug)]
 pub struct ResetLevel;
@@ -38,9 +38,9 @@ impl Plugin for LevelsPlugin {
     }
 }
 
-fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+fn setup(mut commands: Commands, level_assets: Res<LevelAssets>) {
     commands.spawn_bundle(LdtkWorldBundle {
-        ldtk_handle: asset_server.load("levels.ldtk"),
+        ldtk_handle: level_assets.levels.clone(),
         ..Default::default()
     });
 }

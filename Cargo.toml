@@ -9,6 +9,10 @@ resolver = "2"
 [dependencies]
 bevy = { version = "0.6.1", features = [ "bevy_gilrs", "bevy_winit", "render", "png", "hdr", "x11", "filesystem_watcher" ] }
 
+# Asset loading
+bevy_embedded_assets = "0.2.1"
+bevy_asset_loader = "0.9.0"
+
 # Audio plugin
 bevy_kira_audio = { version = "0.8.0", features = ["wav"] }
 

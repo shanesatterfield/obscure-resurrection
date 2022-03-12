@@ -5,6 +5,7 @@ use heron::prelude::*;
 
 use crate::game::level::components::ColliderBundle;
 use crate::game::level::components::ProjectileBundle;
+use crate::types::ImageAssets;
 use crate::{game::components::GameCollisionLayers, types::GameState};
 
 use super::{
@@ -49,7 +50,7 @@ fn setup_enemy(
 fn on_shoot(
     mut commands: Commands,
     time: Res<Time>,
-    asset_server: Res<AssetServer>,
+    image_assets: Res<ImageAssets>,
     player_query: Query<&Transform, With<Player>>,
     mut query: Query<(&Transform, &mut Attacking), With<Enemy>>,
 ) {
@@ -72,7 +73,7 @@ fn on_shoot(
             commands
                 .spawn_bundle(ProjectileBundle {
                     sprite_bundle: SpriteBundle {
-                        texture: asset_server.load("projectiles/energy_star.png"),
+                        texture: image_assets.energy_star.clone(),
                         transform: new_transform,
                         ..Default::default()
                     },

@@ -1,6 +1,9 @@
 use bevy::prelude::*;
 
-use crate::{camera::WINDOW_SCALE, types::GameState};
+use crate::{
+    camera::WINDOW_SCALE,
+    types::{GameState, ImageAssets},
+};
 
 use super::{
     events::PlayerDamaged,
@@ -37,7 +40,7 @@ impl Plugin for UiPlugin {
     }
 }
 
-fn spawn_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
+fn spawn_ui(mut commands: Commands, image_assets: Res<ImageAssets>) {
     commands
         .spawn_bundle(NodeBundle {
             style: Style {
@@ -78,7 +81,7 @@ fn spawn_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
                                     ),
                                     ..Default::default()
                                 },
-                                image: asset_server.load("icons/heart.png").into(),
+                                image: image_assets.heart.clone().into(),
                                 ..Default::default()
                             })
                             .insert(UiElementIndex(index))
@@ -91,7 +94,7 @@ fn spawn_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
                             size: Size::new(Val::Px(8. * WINDOW_SCALE), Val::Px(8. * WINDOW_SCALE)),
                             ..Default::default()
                         },
-                        image: asset_server.load("icons/potion.png").into(),
+                        image: image_assets.potion.clone().into(),
                         ..Default::default()
                     });
                     for index in 1..=3 {
@@ -104,7 +107,7 @@ fn spawn_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
                                     ),
                                     ..Default::default()
                                 },
-                                image: asset_server.load("text/tile-0.png").into(),
+                                image: image_assets.text0.clone().into(),
                                 ..Default::default()
                             })
                             .insert(UiElementIndex(4 - index))
@@ -117,7 +120,7 @@ fn spawn_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
                             size: Size::new(Val::Px(8. * WINDOW_SCALE), Val::Px(8. * WINDOW_SCALE)),
                             ..Default::default()
                         },
-                        image: asset_server.load("icons/coin.png").into(),
+                        image: image_assets.coin.clone().into(),
                         ..Default::default()
                     });
                     for index in 1..=3 {
@@ -130,7 +133,7 @@ fn spawn_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
                                     ),
                                     ..Default::default()
                                 },
-                                image: asset_server.load("text/tile-0.png").into(),
+                                image: image_assets.text0.clone().into(),
                                 ..Default::default()
                             })
                             .insert(UiElementIndex(4 - index))
@@ -142,16 +145,16 @@ fn spawn_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
 
 fn update_health_containers(
     game_world_state: Res<GameWorldState>,
-    asset_server: Res<AssetServer>,
+    image_assets: Res<ImageAssets>,
     mut query: Query<(&mut UiImage, &UiElementIndex), With<HealthContainerImage>>,
     mut event_reader: EventReader<PlayerDamaged>,
 ) {
     for _ in event_reader.iter() {
         for (mut image, element_index) in query.iter_mut() {
             if element_index.0 > game_world_state.player_health {
-                *image = asset_server.load("icons/empty_heart_container.png").into();
+                *image = image_assets.empty_heart.clone().into();
             } else {
-                *image = asset_server.load("icons/heart.png").into();
+                *image = image_assets.heart.clone().into();
             }
         }
     }
@@ -159,7 +162,7 @@ fn update_health_containers(
 
 fn update_potion_counter(
     game_world_state: Res<GameWorldState>,
-    asset_server: Res<AssetServer>,
+    image_assets: Res<ImageAssets>,
     mut query: Query<(&mut UiImage, &UiElementIndex), With<BorkPointNumber>>,
 ) {
     let bork_points = game_world_state.bork_points;
@@ -170,13 +173,13 @@ fn update_potion_counter(
     for (mut image, element_index) in query.iter_mut() {
         match element_index.0 {
             1 => {
-                *image = number_to_image(asset_server.clone(), ones).into();
+                *image = number_to_image(image_assets.clone(), ones).into();
             }
             2 => {
-                *image = number_to_image(asset_server.clone(), tens).into();
+                *image = number_to_image(image_assets.clone(), tens).into();
             }
             3 => {
-                *image = number_to_image(asset_server.clone(), hundreds).into();
+                *image = number_to_image(image_assets.clone(), hundreds).into();
             }
             _ => {}
         }
@@ -185,7 +188,7 @@ fn update_potion_counter(
 
 fn update_coin_counter(
     game_world_state: Res<GameWorldState>,
-    asset_server: Res<AssetServer>,
+    image_assets: Res<ImageAssets>,
     mut query: Query<(&mut UiImage, &UiElementIndex), With<CoinNumber>>,
 ) {
     let coins = game_world_state.coins;
@@ -196,32 +199,32 @@ fn update_coin_counter(
     for (mut image, element_index) in query.iter_mut() {
         match element_index.0 {
             1 => {
-                *image = number_to_image(asset_server.clone(), ones).into();
+                *image = number_to_image(image_assets.clone(), ones).into();
             }
             2 => {
-                *image = number_to_image(asset_server.clone(), tens).into();
+                *image = number_to_image(image_assets.clone(), tens).into();
             }
             3 => {
-                *image = number_to_image(asset_server.clone(), hundreds).into();
+                *image = number_to_image(image_assets.clone(), hundreds).into();
             }
             _ => {}
         }
     }
 }
 
-fn number_to_image(asset_server: AssetServer, num: u32) -> Handle<Image> {
+fn number_to_image(image_assets: ImageAssets, num: u32) -> Handle<Image> {
     match num {
-        0 => asset_server.load("text/tile-0.png"),
-        1 => asset_server.load("text/tile-1.png"),
-        2 => asset_server.load("text/tile-2.png"),
-        3 => asset_server.load("text/tile-3.png"),
-        4 => asset_server.load("text/tile-4.png"),
-        5 => asset_server.load("text/tile-5.png"),
-        6 => asset_server.load("text/tile-6.png"),
-        7 => asset_server.load("text/tile-7.png"),
-        8 => asset_server.load("text/tile-8.png"),
-        9 => asset_server.load("text/tile-9.png"),
-        _ => asset_server.load("text/tile-0.png"),
+        0 => image_assets.text0.clone(),
+        1 => image_assets.text1.clone(),
+        2 => image_assets.text2.clone(),
+        3 => image_assets.text3.clone(),
+        4 => image_assets.text4.clone(),
+        5 => image_assets.text5.clone(),
+        6 => image_assets.text6.clone(),
+        7 => image_assets.text7.clone(),
+        8 => image_assets.text8.clone(),
+        9 => image_assets.text9.clone(),
+        _ => image_assets.text0.clone(),
     }
 }
 

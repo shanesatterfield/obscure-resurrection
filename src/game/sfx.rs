@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_kira_audio::Audio;
 
-use crate::types::GameState;
+use crate::types::{AudioAssets, GameState};
 
 use super::events::{EnemyAttackBlocked, PickupCoin, PickupItem, PlayerBorked, PlayerDamaged};
 
@@ -22,50 +22,50 @@ impl Plugin for SfxPlugin {
 
 fn player_picked_up_item(
     mut event_reader: EventReader<PickupItem>,
-    asset_server: Res<AssetServer>,
+    audio_assets: Res<AudioAssets>,
     audio: Res<Audio>,
 ) {
     for _ in event_reader.iter() {
-        audio.play(asset_server.load("audio/coin_sfx.wav"));
+        audio.play(audio_assets.coin.clone());
     }
 }
 
 fn player_picked_up_coin_sfx(
     mut event_reader: EventReader<PickupCoin>,
-    asset_server: Res<AssetServer>,
+    audio_assets: Res<AudioAssets>,
     audio: Res<Audio>,
 ) {
     for _ in event_reader.iter() {
-        audio.play(asset_server.load("audio/coin_sfx.wav"));
+        audio.play(audio_assets.coin.clone());
     }
 }
 
 fn player_damaged_sfx(
     mut event_reader: EventReader<PlayerDamaged>,
-    asset_server: Res<AssetServer>,
+    audio_assets: Res<AudioAssets>,
     audio: Res<Audio>,
 ) {
     for _ in event_reader.iter() {
-        audio.play(asset_server.load("audio/hit_sfx.wav"));
+        audio.play(audio_assets.hit.clone());
     }
 }
 
 fn enemy_attack_blocked(
     mut event_reader: EventReader<EnemyAttackBlocked>,
-    asset_server: Res<AssetServer>,
+    audio_assets: Res<AudioAssets>,
     audio: Res<Audio>,
 ) {
     for _ in event_reader.iter() {
-        audio.play(asset_server.load("audio/block_sfx.wav"));
+        audio.play(audio_assets.block.clone());
     }
 }
 
 fn player_borked_sfx(
     mut event_reader: EventReader<PlayerBorked>,
-    asset_server: Res<AssetServer>,
+    audio_assets: Res<AudioAssets>,
     audio: Res<Audio>,
 ) {
     for _ in event_reader.iter() {
-        audio.play(asset_server.load("audio/bork_sfx.wav"));
+        audio.play(audio_assets.bork.clone());
     }
 }

@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::types::GameState;
+use crate::types::{FontAssets, GameState};
 
 #[derive(Component, Default, Clone, Debug)]
 pub struct OnlyInMainMenu;
@@ -15,7 +15,7 @@ impl Plugin for MainMenuPlugin {
     }
 }
 
-fn spawn_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
+fn spawn_ui(mut commands: Commands, font_assets: Res<FontAssets>) {
     commands
         .spawn_bundle(NodeBundle {
             style: Style {
@@ -40,7 +40,7 @@ fn spawn_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
                         TextSection {
                             value: "Obscure Resurrection\n".to_string(),
                             style: TextStyle {
-                                font: asset_server.load("ConsolaMono.ttf"),
+                                font: font_assets.font.clone(),
                                 font_size: 120.,
                                 color: Color::WHITE,
                             },
@@ -48,7 +48,7 @@ fn spawn_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
                         TextSection {
                             value: "Press Enter to Start".to_string(),
                             style: TextStyle {
-                                font: asset_server.load("ConsolaMono.ttf"),
+                                font: font_assets.font.clone(),
                                 font_size: 80.,
                                 color: Color::WHITE,
                             },

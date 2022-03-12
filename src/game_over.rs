@@ -1,6 +1,9 @@
 use bevy::prelude::*;
 
-use crate::{game::game::GameWorldState, types::GameState};
+use crate::{
+    game::game::GameWorldState,
+    types::{FontAssets, GameState},
+};
 
 #[derive(Component, Default, Clone, Debug)]
 pub struct OnlyInGameOver;
@@ -18,7 +21,7 @@ impl Plugin for GameOverPlugin {
 fn spawn_ui(
     mut commands: Commands,
     game_world_state: Res<GameWorldState>,
-    asset_server: Res<AssetServer>,
+    font_assets: Res<FontAssets>,
 ) {
     commands
         .spawn_bundle(NodeBundle {
@@ -44,7 +47,7 @@ fn spawn_ui(
                         TextSection {
                             value: "Game Over\n".to_string(),
                             style: TextStyle {
-                                font: asset_server.load("ConsolaMono.ttf"),
+                                font: font_assets.font.clone(),
                                 font_size: 120.,
                                 color: Color::WHITE,
                             },
@@ -53,7 +56,7 @@ fn spawn_ui(
                             value: format!("You collected {} coins\n", game_world_state.coins,)
                                 .to_string(),
                             style: TextStyle {
-                                font: asset_server.load("ConsolaMono.ttf"),
+                                font: font_assets.font.clone(),
                                 font_size: 80.,
                                 color: Color::WHITE,
                             },
@@ -62,7 +65,7 @@ fn spawn_ui(
                             value: format!("In {} seconds\n", game_world_state.play_time as u32,)
                                 .to_string(),
                             style: TextStyle {
-                                font: asset_server.load("ConsolaMono.ttf"),
+                                font: font_assets.font.clone(),
                                 font_size: 80.,
                                 color: Color::WHITE,
                             },
@@ -70,7 +73,7 @@ fn spawn_ui(
                         TextSection {
                             value: "Press Enter to Restart".to_string(),
                             style: TextStyle {
-                                font: asset_server.load("ConsolaMono.ttf"),
+                                font: font_assets.font.clone(),
                                 font_size: 80.,
                                 color: Color::WHITE,
                             },

@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use heron::prelude::*;
 
-use crate::types::GameState;
+use crate::types::{GameState, ImageAssets};
 
 use super::{
     components::{GameCollisionLayers, Player, Speed, TimeToLive},
@@ -59,7 +59,7 @@ fn bork(
     mut commands: Commands,
     mut game_world_state: ResMut<GameWorldState>,
     keyboard_input: Res<Input<KeyCode>>,
-    asset_server: Res<AssetServer>,
+    image_assets: Res<ImageAssets>,
     query: Query<Entity, With<Player>>,
     mut event_writer: EventWriter<PlayerBorked>,
 ) {
@@ -87,7 +87,7 @@ fn bork(
                 ttl: TimeToLive(Timer::from_seconds(3., false)),
 
                 sprite_bundle: SpriteBundle {
-                    texture: asset_server.load("projectiles/bork_3.png"),
+                    texture: image_assets.bork.clone(),
                     ..Default::default()
                 },
 
