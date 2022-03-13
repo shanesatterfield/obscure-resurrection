@@ -18,6 +18,7 @@ mod types;
 fn main() {
     let mut app = App::new();
 
+    // Load all assets before the game starts up
     AssetLoader::new(types::GameState::Loading)
         .continue_to_state(types::GameState::MainMenu)
         .with_collection::<AudioAssets>()
@@ -40,7 +41,7 @@ fn main() {
     .add_plugin(PhysicsPlugin::default())
     .add_plugin(BigBrainPlugin)
     .add_plugin(AudioPlugin)
-    .add_plugin(texture::textures::TexturePlugin)
+    .add_plugin(texture::plugin::TexturePlugin)
     .add_plugin(camera::CameraPlugin)
     .add_plugin(main_menu::MainMenuPlugin)
     .add_plugin(game_over::GameOverPlugin)

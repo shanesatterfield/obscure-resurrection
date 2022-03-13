@@ -4,23 +4,7 @@ use heron::prelude::Velocity;
 
 use super::components::{FacingDirection, HorizontalDirection};
 
-pub struct TexturePlugin;
-
-#[derive(Default)]
-pub struct Textures {
-    pub texture_atlas_handle: Handle<TextureAtlas>,
-}
-
-impl Plugin for TexturePlugin {
-    fn build(&self, app: &mut App) {
-        app.insert_resource(Textures::default())
-            .add_system(change_direction)
-            .add_system(set_texture_filters_to_nearest)
-            .add_system(flip_assets);
-    }
-}
-
-fn change_direction(mut query: Query<(&Velocity, &mut FacingDirection), Changed<Velocity>>) {
+pub fn change_direction(mut query: Query<(&Velocity, &mut FacingDirection), Changed<Velocity>>) {
     for (velocity, mut facing_direction) in query.iter_mut() {
         if velocity.linear.x < 0. {
             facing_direction.0 = HorizontalDirection::LEFT;
@@ -30,7 +14,7 @@ fn change_direction(mut query: Query<(&Velocity, &mut FacingDirection), Changed<
     }
 }
 
-fn flip_assets(
+pub fn flip_assets(
     mut query: Query<(&mut TextureAtlasSprite, &FacingDirection), Changed<FacingDirection>>,
 ) {
     for (mut sprite, facing_direction) in query.iter_mut() {
