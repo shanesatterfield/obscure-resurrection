@@ -4,7 +4,7 @@ use heron::prelude::*;
 use crate::types::{GameState, ImageAssets};
 
 use super::{
-    components::{GameCollisionLayers, Player, Speed, TimeToLive},
+    components::{Bork, GameCollisionLayers, Player, Speed, TimeToLive},
     events::PlayerBorked,
     game::GameWorldState,
     level::components::{BorkBundle, ColliderBundle},
@@ -22,7 +22,8 @@ impl Plugin for PlayerPlugin {
                         .before(PhysicsSystem::VelocityUpdate),
                 )
                 .with_system(setup_player)
-                .with_system(bork),
+                .with_system(bork)
+                .with_system(is_borking),
         );
     }
 }
@@ -84,6 +85,7 @@ fn bork(
         // Spawn the bork as a child of the player
         let child = commands
             .spawn_bundle(BorkBundle {
+                bork: Bork::default(),
                 ttl: TimeToLive(Timer::from_seconds(3., false)),
 
                 sprite_bundle: SpriteBundle {
@@ -115,4 +117,8 @@ fn bork(
 
         event_writer.send(PlayerBorked::default());
     }
+}
+
+fn is_borking(mut game_world_state: ResMut<GameWorldState>, query: Query<Entity, With<Bork>>) {
+    game_world_state.is_borking = query.iter().count() > 0;
 }

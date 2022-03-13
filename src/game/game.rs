@@ -29,6 +29,7 @@ pub struct GameWorldState {
     pub potion_inventory: u32,
     pub bork_points: u32,
     pub coins: u32,
+    pub is_borking: bool,
     pub play_time: f64,
 }
 
@@ -39,6 +40,7 @@ impl Default for GameWorldState {
             potion_inventory: 0,
             bork_points: 0,
             coins: 0,
+            is_borking: false,
             play_time: 0.,
         }
     }

@@ -98,6 +98,7 @@ pub struct ProjectileBundle {
 
 #[derive(Bundle)]
 pub struct BorkBundle {
+    pub bork: Bork,
     pub ttl: TimeToLive,
 
     #[bundle]

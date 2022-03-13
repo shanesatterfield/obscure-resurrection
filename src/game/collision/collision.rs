@@ -1,4 +1,5 @@
 use crate::game::events::*;
+use crate::game::game::GameWorldState;
 use crate::levels::IncrementLevel;
 use bevy::prelude::*;
 use heron::CollisionEvent;
@@ -9,7 +10,12 @@ pub fn player_attack_collision(
     mut commands: Commands,
     collision_events: EventReader<CollisionEvent>,
     mut event_writer: EventWriter<PlayerDamaged>,
+    game_world_state: Res<GameWorldState>,
 ) {
+    if game_world_state.is_borking {
+        return;
+    }
+
     filter_events(
         collision_events,
         is_enemy_attack,

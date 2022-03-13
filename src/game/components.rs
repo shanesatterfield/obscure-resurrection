@@ -20,6 +20,9 @@ pub struct Wall;
 pub struct Stairs;
 
 #[derive(Component, Default, Clone)]
+pub struct Bork;
+
+#[derive(Component, Default, Clone)]
 pub struct Speed(pub f32);
 
 #[derive(Component)]
