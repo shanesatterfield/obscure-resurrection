@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 
-use crate::types::{FontAssets, GameState};
+use crate::types::GameState;
+use crate::types::ImageAssets;
 
 #[derive(Component, Default, Clone, Debug)]
 pub struct OnlyInMainMenu;
@@ -15,7 +16,7 @@ impl Plugin for MainMenuPlugin {
     }
 }
 
-fn spawn_ui(mut commands: Commands, font_assets: Res<FontAssets>) {
+fn spawn_ui(mut commands: Commands, image_assets: Res<ImageAssets>) {
     commands
         .spawn_bundle(NodeBundle {
             style: Style {
@@ -30,37 +31,13 @@ fn spawn_ui(mut commands: Commands, font_assets: Res<FontAssets>) {
         })
         .insert(OnlyInMainMenu)
         .with_children(|parent| {
-            parent.spawn_bundle(TextBundle {
+            parent.spawn_bundle(ImageBundle {
                 style: Style {
                     align_self: AlignSelf::Center,
+                    size: Size::new(Val::Percent(100.), Val::Percent(100.)),
                     ..Default::default()
                 },
-                text: Text {
-                    sections: vec![
-                        TextSection {
-                            value: "Obscure Resurrection\n".to_string(),
-                            style: TextStyle {
-                                font: font_assets.font.clone(),
-                                font_size: 120.,
-                                color: Color::WHITE,
-                            },
-                        },
-                        TextSection {
-                            value: "Press Enter to Start".to_string(),
-                            style: TextStyle {
-                                font: font_assets.font.clone(),
-                                font_size: 80.,
-                                color: Color::WHITE,
-                            },
-                        },
-                    ],
-                    alignment: TextAlignment {
-                        vertical: VerticalAlign::Center,
-                        horizontal: HorizontalAlign::Center,
-                        ..Default::default()
-                    },
-                    ..Default::default()
-                },
+                image: image_assets.title_screen.clone().into(),
                 ..Default::default()
             });
         });

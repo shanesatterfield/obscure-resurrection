@@ -13,6 +13,9 @@ pub enum GameState {
 
 #[derive(AssetCollection, Clone)]
 pub struct ImageAssets {
+    #[asset(path = "title_screen.png")]
+    pub title_screen: Handle<Image>,
+
     #[asset(path = "oracle_1bit_assets/8x8.png")]
     pub sprite_sheet: Handle<Image>,
 
