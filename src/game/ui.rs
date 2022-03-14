@@ -10,6 +10,8 @@ use super::{
     game::{GameWorldState, PLAYER_MAX_HEALTH},
 };
 
+const MAX_UI_DIGITS: u32 = 4;
+
 #[derive(Component, Default, Clone, Debug)]
 pub struct GameUi;
 
@@ -97,7 +99,7 @@ fn spawn_ui(mut commands: Commands, image_assets: Res<ImageAssets>) {
                         image: image_assets.potion.clone().into(),
                         ..Default::default()
                     });
-                    for index in 1..=3 {
+                    for index in 1..=MAX_UI_DIGITS {
                         parent
                             .spawn_bundle(ImageBundle {
                                 style: Style {
@@ -110,7 +112,7 @@ fn spawn_ui(mut commands: Commands, image_assets: Res<ImageAssets>) {
                                 image: image_assets.text0.clone().into(),
                                 ..Default::default()
                             })
-                            .insert(UiElementIndex(4 - index))
+                            .insert(UiElementIndex(MAX_UI_DIGITS + 1 - index))
                             .insert(BorkPointNumber::default());
                     }
 
@@ -123,7 +125,7 @@ fn spawn_ui(mut commands: Commands, image_assets: Res<ImageAssets>) {
                         image: image_assets.coin.clone().into(),
                         ..Default::default()
                     });
-                    for index in 1..=3 {
+                    for index in 1..=MAX_UI_DIGITS {
                         parent
                             .spawn_bundle(ImageBundle {
                                 style: Style {
@@ -136,7 +138,7 @@ fn spawn_ui(mut commands: Commands, image_assets: Res<ImageAssets>) {
                                 image: image_assets.text0.clone().into(),
                                 ..Default::default()
                             })
-                            .insert(UiElementIndex(4 - index))
+                            .insert(UiElementIndex(MAX_UI_DIGITS + 1 - index))
                             .insert(CoinNumber::default());
                     }
                 });
@@ -169,6 +171,7 @@ fn update_potion_counter(
     let ones = bork_points % 10;
     let tens = ((bork_points % 100) - ones) / 10;
     let hundreds = ((bork_points % 1000) - tens - ones) / 100;
+    let thousands = ((bork_points % 10000) - hundreds - tens - ones) / 1000;
 
     for (mut image, element_index) in query.iter_mut() {
         match element_index.0 {
@@ -180,6 +183,9 @@ fn update_potion_counter(
             }
             3 => {
                 *image = number_to_image(image_assets.clone(), hundreds).into();
+            }
+            4 => {
+                *image = number_to_image(image_assets.clone(), thousands).into();
             }
             _ => {}
         }
@@ -195,6 +201,7 @@ fn update_coin_counter(
     let ones = coins % 10;
     let tens = ((coins % 100) - ones) / 10;
     let hundreds = ((coins % 1000) - tens - ones) / 100;
+    let thousands = ((coins % 10000) - hundreds - tens - ones) / 1000;
 
     for (mut image, element_index) in query.iter_mut() {
         match element_index.0 {
@@ -206,6 +213,9 @@ fn update_coin_counter(
             }
             3 => {
                 *image = number_to_image(image_assets.clone(), hundreds).into();
+            }
+            4 => {
+                *image = number_to_image(image_assets.clone(), thousands).into();
             }
             _ => {}
         }
