@@ -10,13 +10,13 @@ use super::{
     game::{GameWorldState, PLAYER_MAX_HEALTH},
 };
 
-const MAX_UI_DIGITS: u32 = 4;
+const MAX_UI_DIGITS: usize = 4;
 
 #[derive(Component, Default, Clone, Debug)]
 pub struct GameUi;
 
 #[derive(Component, Default, Clone, Debug)]
-pub struct UiElementIndex(u32);
+pub struct UiElementIndex(usize);
 
 #[derive(Component, Default, Clone, Debug)]
 pub struct HealthContainerImage;
@@ -86,7 +86,7 @@ fn spawn_ui(mut commands: Commands, image_assets: Res<ImageAssets>) {
                                 image: image_assets.heart.clone().into(),
                                 ..Default::default()
                             })
-                            .insert(UiElementIndex(index))
+                            .insert(UiElementIndex(index as usize))
                             .insert(HealthContainerImage::default());
                     }
 
@@ -153,7 +153,7 @@ fn update_health_containers(
 ) {
     for _ in event_reader.iter() {
         for (mut image, element_index) in query.iter_mut() {
-            if element_index.0 > game_world_state.player_health {
+            if element_index.0 as u32 > game_world_state.player_health {
                 *image = image_assets.empty_heart.clone().into();
             } else {
                 *image = image_assets.heart.clone().into();
@@ -167,27 +167,18 @@ fn update_potion_counter(
     image_assets: Res<ImageAssets>,
     mut query: Query<(&mut UiImage, &UiElementIndex), With<BorkPointNumber>>,
 ) {
-    let bork_points = game_world_state.bork_points;
-    let ones = bork_points % 10;
-    let tens = ((bork_points % 100) - ones) / 10;
-    let hundreds = ((bork_points % 1000) - tens - ones) / 100;
-    let thousands = ((bork_points % 10000) - hundreds - tens - ones) / 1000;
+    let digits: Vec<u32> = game_world_state
+        .bork_points
+        .to_string()
+        .chars()
+        .rev()
+        .map(|c| c.to_digit(10).unwrap())
+        .collect();
 
     for (mut image, element_index) in query.iter_mut() {
-        match element_index.0 {
-            1 => {
-                *image = number_to_image(image_assets.clone(), ones).into();
-            }
-            2 => {
-                *image = number_to_image(image_assets.clone(), tens).into();
-            }
-            3 => {
-                *image = number_to_image(image_assets.clone(), hundreds).into();
-            }
-            4 => {
-                *image = number_to_image(image_assets.clone(), thousands).into();
-            }
-            _ => {}
+        let index = element_index.0;
+        if index >= 1 && index <= MAX_UI_DIGITS {
+            *image = number_to_image(image_assets.clone(), digits.get(index - 1)).into();
         }
     }
 }
@@ -197,32 +188,25 @@ fn update_coin_counter(
     image_assets: Res<ImageAssets>,
     mut query: Query<(&mut UiImage, &UiElementIndex), With<CoinNumber>>,
 ) {
-    let coins = game_world_state.coins;
-    let ones = coins % 10;
-    let tens = ((coins % 100) - ones) / 10;
-    let hundreds = ((coins % 1000) - tens - ones) / 100;
-    let thousands = ((coins % 10000) - hundreds - tens - ones) / 1000;
+    let digits: Vec<u32> = game_world_state
+        .coins
+        .to_string()
+        .chars()
+        .rev()
+        .map(|c| c.to_digit(10).unwrap())
+        .collect();
 
     for (mut image, element_index) in query.iter_mut() {
-        match element_index.0 {
-            1 => {
-                *image = number_to_image(image_assets.clone(), ones).into();
-            }
-            2 => {
-                *image = number_to_image(image_assets.clone(), tens).into();
-            }
-            3 => {
-                *image = number_to_image(image_assets.clone(), hundreds).into();
-            }
-            4 => {
-                *image = number_to_image(image_assets.clone(), thousands).into();
-            }
-            _ => {}
+        let index = element_index.0;
+        if index >= 1 && index <= MAX_UI_DIGITS {
+            *image = number_to_image(image_assets.clone(), digits.get(index - 1)).into();
         }
     }
 }
 
-fn number_to_image(image_assets: ImageAssets, num: u32) -> Handle<Image> {
+fn number_to_image(image_assets: ImageAssets, num: Option<&u32>) -> Handle<Image> {
+    let default: u32 = 0;
+    let num = num.unwrap_or(&default);
     match num {
         0 => image_assets.text0.clone(),
         1 => image_assets.text1.clone(),
