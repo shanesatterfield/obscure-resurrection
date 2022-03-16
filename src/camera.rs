@@ -29,11 +29,8 @@ fn setup(mut commands: Commands) {
     let mut camera = OrthographicCameraBundle::new_2d();
 
     // Set the scale on the window right away
-    // let main_window = windows.get_primary().unwrap();
-    // camera.orthographic_projection.scale = config::WINDOW_WIDTH / main_window.width();
     camera.orthographic_projection.scale = DEFAULT_PROJECTION;
 
-    // commands.spawn_bundle(camera).insert(ScalingCamera);
     commands
         .spawn_bundle(camera)
         .insert(CameraThatFollows::default());
