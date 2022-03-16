@@ -8,9 +8,7 @@ Run around as Dog. Collect coins and stay alive.
 
 You can view the game on Itch [here](https://dustyplant.itch.io/obscure-resurrection).
 
-![Thumbnail](static/obscure-resurrection-thumbnail.png)
-![Thumbnail](static/obscure-resurrection-gif-1.gif)
-![Thumbnail](static/obscure-resurrection-gif-2.gif)
+![Gif](static/obscure-resurrection-gif-1.gif)
 
 ## Run the Game
 
