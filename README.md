@@ -2,6 +2,10 @@
 
 This is a game made in Bevy 0.6 to test things out and have fun.
 
+Run around as Dog. Collect coins and stay alive.
+
+You can view the game on Itch [here](https://dustyplant.itch.io/obscure-resurrection).
+
 ## Run the Game
 
 ### In Development For Fast Iterations
