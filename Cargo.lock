@@ -1408,9 +1408,9 @@ checksum = "9ea835d29036a4087793836fa931b08837ad5e957da9e23886b29586fb9b6650"
 
 [[package]]
 name = "duplicate"
-version = "0.3.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3cdaf23abc9bcc47fda1ae3af68425a22b4dfbd745f9077be0eaad5320f75f52"
+checksum = "4a2535fcf1437c9de0d91a3921351c474258abdb6440cd03bb5a7cf0547e7214"
 dependencies = [
  "heck",
  "proc-macro-error",
@@ -1737,12 +1737,9 @@ dependencies = [
 
 [[package]]
 name = "heck"
-version = "0.3.2"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "87cbf45460356b7deeb5e3415b5563308c0a9b057c85e12b06ad551f98d0a6ac"
-dependencies = [
- "unicode-segmentation",
-]
+checksum = "2540771e65fc8cb83cd6e8a237f70c319bd5c29f78ed1084ba5d50eeac86f7f9"
 
 [[package]]
 name = "hermit-abi"
@@ -1755,9 +1752,9 @@ dependencies = [
 
 [[package]]
 name = "heron"
-version = "1.2.0"
+version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "730b2f584ae0011ab913800545c863075131e5ab5c7f068b25fa4272b70e3b40"
+checksum = "f4cee56d499ba5c64613ef1c254b715114bc77fa727302b5274c7714d891e10b"
 dependencies = [
  "bevy",
  "cfg_aliases",
@@ -1768,20 +1765,21 @@ dependencies = [
 
 [[package]]
 name = "heron_core"
-version = "1.2.0"
+version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1edf91b278911cb7a42cb69baa4432f30b86d9d6422a3dd016bac13dc1838c29"
+checksum = "440bacbfad89b0f18e28ed427ddd1d16c060432b9d8d8e4fce3bea3119c9df98"
 dependencies = [
  "bevy",
  "cfg_aliases",
  "duplicate",
+ "smallvec",
 ]
 
 [[package]]
 name = "heron_macros"
-version = "1.2.0"
+version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "77af74bcb8bb49126a912ca80c3c2e7d576c8f8da7173b984815c58185f17185"
+checksum = "445b54f035a07d78b780105b39a91157b37d509cee30dcb7b480a2692051527d"
 dependencies = [
  "quote",
  "syn",
@@ -1789,9 +1787,9 @@ dependencies = [
 
 [[package]]
 name = "heron_rapier"
-version = "1.2.0"
+version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2ef624c5abb13846331beddf45de6e5c74e1575eb46673f4c9fda4479755438e"
+checksum = "6ef1cb79e397dbc00046a79b70d83ab9169b9039c58bdcd4343906507a4bf96e"
 dependencies = [
  "bevy",
  "cfg_aliases",
@@ -3439,12 +3437,6 @@ name = "typenum"
 version = "1.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dcf81ac59edc17cc8697ff311e8f5ef2d99fcbd9817b34cec66f90b6c3dfd987"
-
-[[package]]
-name = "unicode-segmentation"
-version = "1.9.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7e8820f5d777f6224dc4be3632222971ac30164d4a258d595640799554ebfd99"
 
 [[package]]
 name = "unicode-width"

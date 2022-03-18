@@ -22,7 +22,7 @@ bevy_ecs_ldtk = { git = "https://github.com/Trouv/bevy_ecs_ldtk", features = ["a
 # bevy_ecs_ldtk =  "0.1.0"
 
 big-brain = "0.10.0"
-heron = { version = "1.2.0", features = ["2d"] }
+heron = { version = "2.2.0", features = ["2d"] }
 wasm-bindgen = "0.2.79"
 
 # Enable only a small amount of optimization in debug mode

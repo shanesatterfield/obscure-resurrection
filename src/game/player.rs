@@ -52,7 +52,11 @@ fn move_player(
     }
 
     for (speed, mut velocity) in query.iter_mut() {
-        *velocity = Velocity::from_linear(direction.extend(0.).normalize_or_zero() * speed.0);
+        let new_velocity =
+            Velocity::from_linear(direction.extend(0.).normalize_or_zero() * speed.0);
+        if velocity.linear != new_velocity.linear {
+            *velocity = new_velocity;
+        }
     }
 }
 
