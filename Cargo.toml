@@ -7,14 +7,11 @@ resolver = "2"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bevy = { version = "0.7", features = [ "bevy_gilrs", "bevy_winit", "render", "png", "hdr", "x11", "filesystem_watcher" ] }
+bevy = { version = "0.7", features = ["wav"] }
 
 # Asset loading
 bevy_embedded_assets = "0.3"
 bevy_asset_loader = "0.10.0"
-
-# Audio plugin
-bevy_kira_audio = { version = "0.9", features = ["wav"] }
 
 # The "atlas" feature is required to work in the WASM export.
 # This feature is not in the current release, so we have to pull from main

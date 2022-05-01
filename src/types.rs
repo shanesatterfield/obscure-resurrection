@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 use bevy_asset_loader::AssetCollection;
 use bevy_ecs_ldtk::LdtkAsset;
-use bevy_kira_audio::AudioSource;
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub enum GameState {

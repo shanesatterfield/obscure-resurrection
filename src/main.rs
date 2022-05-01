@@ -1,5 +1,4 @@
 use bevy::prelude::*;
-use bevy_kira_audio::{Audio, AudioPlugin};
 use big_brain::BigBrainPlugin;
 use heron::prelude::*;
 
@@ -39,7 +38,6 @@ fn main() {
     })
     .add_plugin(PhysicsPlugin::default())
     .add_plugin(BigBrainPlugin)
-    .add_plugin(AudioPlugin)
     .add_plugin(texture::plugin::TexturePlugin)
     .add_plugin(camera::CameraPlugin)
     .add_plugin(main_menu::MainMenuPlugin)
@@ -53,5 +51,8 @@ fn main() {
 }
 
 fn play_background_audio(audio_assets: Res<AudioAssets>, audio: Res<Audio>) {
-    audio.play_looped(audio_assets.background_music.clone());
+    audio.play_with_settings(
+        audio_assets.background_music.clone(),
+        PlaybackSettings::LOOP,
+    );
 }
