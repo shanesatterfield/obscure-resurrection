@@ -29,7 +29,6 @@ fn main() {
 
     app.insert_resource(WindowDescriptor {
         title: "Obscure Resurrection".to_string(),
-        vsync: true,
         ..Default::default()
     })
     .insert_resource(ClearColor(Color::rgb(0.098, 0.078, 0.169)))

@@ -1,7 +1,10 @@
 use bevy::prelude::*;
 use heron::prelude::*;
 
-use crate::types::{GameState, ImageAssets};
+use crate::{
+    camera,
+    types::{GameState, ImageAssets},
+};
 
 use super::{
     components::{Bork, GameCollisionLayers, Player, Speed, TimeToLive},
@@ -16,14 +19,14 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_system_set(
             SystemSet::on_update(GameState::InGame)
-                .with_system(
-                    move_player
-                        .before(PhysicsSystem::TransformUpdate)
-                        .before(PhysicsSystem::VelocityUpdate),
-                )
                 .with_system(setup_player)
                 .with_system(bork)
                 .with_system(is_borking),
+        )
+        .add_system_set_to_stage(
+            CoreStage::Update,
+            SystemSet::on_update(GameState::InGame)
+                .with_system(move_player.before(camera::camera_follow_player)),
         );
     }
 }

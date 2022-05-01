@@ -7,22 +7,21 @@ resolver = "2"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bevy = { version = "0.6.1", features = [ "bevy_gilrs", "bevy_winit", "render", "png", "hdr", "x11", "filesystem_watcher" ] }
+bevy = { version = "0.7", features = [ "bevy_gilrs", "bevy_winit", "render", "png", "hdr", "x11", "filesystem_watcher" ] }
 
 # Asset loading
-bevy_embedded_assets = "0.2.1"
-bevy_asset_loader = "0.9.0"
+bevy_embedded_assets = "0.3"
+bevy_asset_loader = "0.10.0"
 
 # Audio plugin
-bevy_kira_audio = { version = "0.8.0", features = ["wav"] }
+bevy_kira_audio = { version = "0.9", features = ["wav"] }
 
 # The "atlas" feature is required to work in the WASM export.
 # This feature is not in the current release, so we have to pull from main
-bevy_ecs_ldtk = { git = "https://github.com/Trouv/bevy_ecs_ldtk", features = ["atlas"] }
-# bevy_ecs_ldtk =  "0.1.0"
+bevy_ecs_ldtk = { version = "0.3", features = ["atlas"] }
 
-big-brain = "0.10.0"
-heron = { version = "2.2.0", features = ["2d"] }
+big-brain = { git = "https://github.com/zkat/big-brain" }
+heron = { version = "3.0.0", features = ["2d"] }
 wasm-bindgen = "0.2.79"
 
 # Enable only a small amount of optimization in debug mode
